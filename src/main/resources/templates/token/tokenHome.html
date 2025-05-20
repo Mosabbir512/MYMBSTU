@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Management - MBSTU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: url('/bsmrh.jpg') no-repeat center center/cover;
+            color: #fff;
+        }
+
+        .main {
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(31, 2, 10, 0.5);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            width: 600px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .checkbox-label {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-label input {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .token-count {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: #e67e22;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #cf711f;
+        }
+
+        .btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .payment-instructions {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            display: none;
+        }
+
+        .transaction-input {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main">
+    <div class="container">
+        <h1>Token Management</h1>
+        <form action="/token/process" method="POST">
+            <label for="hallName">Select Your Hall</label>
+            <select name="hallName" id="hallName" required>
+                <option value="" disabled selected>Select Your Hall</option>
+                <option value="Jananeta Abdul Mannan Hall">Jananeta Abdul Mannan Hall</option>
+                <option value="Bangabandhu Sheikh Mujibur Rahman Hall">Bangabandhu Sheikh Mujibur Rahman Hall</option>
+                <option value="Shahid Ziaur Rahman Hall">Shahid Ziaur Rahman Hall</option>
+                <option value="Sheikh Rasel Hall">Sheikh Rasel Hall</option>
+                <option value="Alema Khatun Bhashani Hall">Alema Khatun Bhashani Hall</option>
+                <option value="Shaheed Janani Jahanara Imam Hall">Shaheed Janani Jahanara Imam Hall</option>
+                <option value="Bangamata Sheikh Fazilatunnesa Mujib Hall">Bangamata Sheikh Fazilatunnesa Mujib Hall</option>
+                <option value="Bangamata Sheikh Fazilatunnesa Mujib Hall (Sirajganj campus)">
+                    Bangamata Sheikh Fazilatunnesa Mujib Hall (Sirajganj campus)
+                </option>
+                <option value="Shaheed M. Monsur Ali Hall (Sirajganj campus)">Shaheed M. Monsur Ali Hall (Sirajganj campus)</option>
+            </select>
+
+            <label>Select Meal Type</label>
+            <div class="checkbox-container">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="lunchCheckbox" name="lunch" value="lunch" onchange="updateTokenCount()"> Lunch
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dinnerCheckbox" name="dinner" value="dinner" onchange="updateTokenCount()"> Dinner
+                </label>
+            </div>
+
+            <div class="token-count">
+                Total Tokens: <span id="tokenCount">0</span> | Total Cost: <span id="totalCost">0</span> Taka
+            </div>
+
+            <input type="hidden" id="hiddenTokenCount" name="tokenCount" value="0">
+
+            <label for="paymentMethod">Select Payment Method:</label>
+            <select name="paymentMethod" id="paymentMethod" required onchange="showPaymentInstructions()">
+                <option value="" disabled selected>Select Payment Method</option>
+                <option value="bKash">bKash</option>
+                <option value="Rocket">Rocket</option>
+                <option value="Nagad">Nagad</option>
+                <option value="Card">Credit/Debit Card</option>
+            </select>
+
+            <div id="paymentInstructions" class="payment-instructions">
+                <p id="instructionsText"></p>
+                <div id="transactionInput" class="transaction-input">
+                    <label for="transactionId">Enter Your Phone Number </label>
+                    <input type="text" id="transactionId" name="transactionId" placeholder="Enter transaction ID">
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submitButton" disabled>Proceed to Payment</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function updateTokenCount() {
+        let lunchChecked = document.getElementById("lunchCheckbox").checked;
+        let dinnerChecked = document.getElementById("dinnerCheckbox").checked;
+
+        let count = 0;
+        if (lunchChecked) count++;
+        if (dinnerChecked) count++;
+
+        document.getElementById("tokenCount").innerText = count;
+        document.getElementById("totalCost").innerText = count * 30;
+        document.getElementById("hiddenTokenCount").value = count;
+
+        // Enable the button only if at least one token is selected
+        document.getElementById("submitButton").disabled = count === 0;
+    }
+
+    function showPaymentInstructions() {
+        const method = document.getElementById('paymentMethod').value;
+        const instructions = document.getElementById('instructionsText');
+        const paymentDiv = document.getElementById('paymentInstructions');
+        const transactionInput = document.getElementById('transactionInput');
+
+        if (method) {
+            paymentDiv.style.display = 'block';
+
+            switch(method) {
+                case 'bKash':
+                    instructions.innerHTML = 'Send money  ';
+                    transactionInput.style.display = 'block';
+                    break;
+                case 'Rocket':
+                    instructions.innerHTML = 'Send money  ';
+                    transactionInput.style.display = 'block';
+                    break;
+                case 'Nagad':
+                     instructions.innerHTML = 'Send money  '; //<strong>017XXXXXXXX</strong>';
+                    transactionInput.style.display = 'block';
+                    break;
+                case 'Card':
+                    instructions.innerHTML = 'You will be redirected to secure payment gateway';
+                    transactionInput.style.display = 'none';
+                    break;
+                default:
+                    instructions.innerHTML = 'Complete payment to get your tokens';
+                    transactionInput.style.display = 'none';
+            }
+        } else {
+            paymentDiv.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

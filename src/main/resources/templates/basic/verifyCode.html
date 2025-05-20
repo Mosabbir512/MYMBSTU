@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Code - MYMBSTU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .verify-code-form {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .verify-code-form h1 {
+      margin-bottom: 1rem;
+      color: #007BFF;
+      text-align: center;
+    }
+    .verify-code-form input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .verify-code-form button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .verify-code-form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<form class="verify-code-form" action="/verifyCode" method="post">
+  <h1>Verify Code</h1>
+  <p style="color: red; text-align: center;" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+  <input type="text" name="code" placeholder="Enter Verification Code" required>
+  <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYMBSTU Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: white;
+            padding-top: 70px;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: linear-gradient(rgba(224, 255, 255, 0.1), rgba(224, 255, 255, 0.1)),
+            url('/baro.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        /* 1) Make the navbar a fixed height and remove vertical padding */
+        .navbar {
+            height: 80px;              /* adjust this to whatever exact height you want */
+            padding: 0 2rem;           /* no top/bottom padding, so total height stays 60px */
+            display: flex;
+            align-items: center;       /* vertically center contents */
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* 2) Ensure the brand wrapper fills that same 60px */
+        .navbar-brand {
+            height: 100%;              /* fill the navbar’s 60px */
+            display: flex;
+            align-items: center;
+            padding: 0;                /* remove any extra padding */
+        }
+
+        /* 3) Force the <img> to be 100% of navbar height, width = 1.5× height */
+        .navbar-logo {
+            height: 100%;              /* 60px tall */
+            aspect-ratio: 3/2;         /* width = (3 ÷ 2)×height → 1.5×height */
+            object-fit: contain;       /* preserve the original image proportions */
+        }
+
+
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #1a5276;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: #E74C3C;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            min-width: 220px;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1.5rem;
+            color: #1a5276;
+            text-decoration: none;
+            display: block;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #E8F8F5;
+            border-left-color: #76D7C4;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: #E74C3C;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #CB4335;
+        }
+
+        /* Main Content Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 2rem 0;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #76D7C4;
+            color: #1a5276;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #E8F8F5;
+        }
+
+        .nav-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #148F77;
+        }
+
+        .nav-card p {
+            font-size: 0.9rem;
+            color: #2E86C1;
+        }
+
+        /* Statistics Section */
+        .stats-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #76D7C4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-box {
+            text-align: center;
+            padding: 1.5rem;
+            background: #E8F8F5;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-box h2 {
+            color: #148F77;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-box p {
+            color: #1a5276;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Faculties Section */
+        .faculties-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            color: #148F77;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            grid-auto-rows: 1fr;
+        }
+
+        .faculty-box {
+            position: relative;
+            background: #E8F8F5;
+            padding: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid #76D7C4;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .faculty-title {
+            color: #1a5276;
+            font-weight: 600;
+
+            margin-bottom: 0.5rem;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .departments-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .faculty-box:hover .departments-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+
+        .departments-dropdown span {
+            display: block;
+            padding: 0.5rem;
+            color: #2E86C1;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #76D7C433;
+        }
+
+        .departments-dropdown span:last-child {
+            border-bottom: none;
+        }
+
+        /* Footer Styles */
+        footer {
+            position: relative;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a5276;
+            border-top: 2px solid #76D7C4;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 1rem;
+        }
+
+        .supervisor-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #76D7C4;
+        }
+
+        .supervisor-message {
+            flex: 1;
+            text-align: left;
+        }
+
+        .supervisor-message h3 {
+            color: #148F77;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .supervisor-message p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #1a5276;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #76D7C4;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .dropdown-content {
+                position: static;
+                box-shadow: none;
+                background: rgba(255,255,255,0.8);
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .supervisor-photo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .supervisor-message {
+                text-align: center;
+            }
+
+            body {
+                padding-bottom: 150px;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1rem;
+            }
+
+            .stats-box h2 {
+                font-size: 1.5rem;
+            }
+
+            .faculty-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .departments-dropdown {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                box-shadow: none;
+                margin-top: 1rem;
+                background: #ffffff99;
+            }
+
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <a href="/home" class="navbar-brand">
+        <img src="/mymbstuLogo.png" alt="MYMBSTU Logo" class="navbar-logo">
+    </a>
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="/about" class="nav-link">About ▼</a>
+            <div class="dropdown-content">
+                <a href="/about/mawlana" class="dropdown-item">About Mawlana Bhashani</a>
+                <a href="/about/achievements" class="dropdown-item">Achievements</a>
+                <a href="/about/news" class="dropdown-item">News & Updates</a>
+                <a href="/about/events" class="dropdown-item">University Events</a>
+                <a href="/about/facts" class="dropdown-item">Facts & Statistics</a>
+                <a href="/about/location" class="dropdown-item">Location & Directions</a>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a href="/notices" class="nav-link">Notices ▼</a>
+            <div class="dropdown-content">
+                <a href="/notices/academic" class="dropdown-item">Academic Notices</a>
+                <a href="/notices/administration" class="dropdown-item">Administration Notices</a>
+                <a href="/notices/events" class="dropdown-item">Event Notices</a>
+                <a href="/notices/results" class="dropdown-item">Exam Results</a>
+                <a href="/notices/tenders" class="dropdown-item">Tenders</a>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a href="/contact" class="nav-link">Contact ▼</a>
+            <div class="dropdown-content">
+                <a href="/contact/aboutDevelopers" class="dropdown-item">About Developers</a>
+                <a href="/contact/feedback" class="dropdown-item">Feedback Form</a>
+            </div>
+        </li>
+
+        <!--        <li class="nav-item" th:if="${user != null }">-->
+        <!--            <a th:if="${ ('ADMIN'.equalsIgnoreCase(user.role))}" href="/noticeAdmin" class="nav-link">Notice Gen ▼</a>-->
+        <!--        </li>-->
+
+        <!-- Conditional Rendering for User Info -->
+        <li class="nav-item user-info" th:if="${user != null}">
+            <span style="color: black;">Welcome, <strong th:text="${user.username}"></strong></span>
+            <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+            <a href="/login" class="nav-link">Login</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<header>
+    <h1>MYMBSTU Portal</h1>
+    <p>Mawlana Bhashani Science and Technology University</p>
+</header>
+
+<div class="container">
+    <div class="nav-container">
+        <div class="nav-card" onclick="navigate('diary')">
+            <h2>📒 University Diary</h2>
+            <p>Your Guide to University Contacts</p>
+        </div>
+
+        <div class="nav-card" onclick="navigate('about_hall_man')">
+            <h2>Hall Management</h2>
+            <p>Your Hall Services Companion</p>
+        </div>
+
+        <div class="nav-card" onclick="navigate('medical')">
+            <h2>🏥 Medical Center</h2>
+            <p>Access healthcare services & records</p>
+        </div>
+
+        <div class="nav-card" onclick="navigate('admission')">
+            <h2>📚 Admission Portal</h2>
+            <p>Your Gateway to admission Info</p>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-container">
+        <div class="stats-box">
+            <h2>07</h2>
+            <p>Faculties</p>
+        </div>
+        <div class="stats-box">
+            <h2>19</h2>
+            <p>Departments</p>
+        </div>
+        <div class="stats-box">
+            <h2>02</h2>
+            <p>Campus</p>
+        </div>
+        <div class="stats-box">
+            <h2>4075</h2>
+            <p>Students</p>
+        </div>
+        <div class="stats-box">
+            <h2>350</h2>
+            <p>Teachers</p>
+        </div>
+        <div class="stats-box">
+            <h2>07</h2>
+            <p>Residential Halls</p>
+        </div>
+    </div>
+
+    <!-- Faculties Section -->
+    <div class="faculties-container">
+        <h2 class="section-title">FACULTIES</h2>
+        <div class="faculty-grid">
+            <!-- Faculty of Engineering -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Engineering</div>
+                <div class="departments-dropdown">
+                    <a href="https://cse.mbstu.ac.bd/">
+                        <span>Computer Science and Engineering</span>
+                    </a>
+                    <a href="https://ict.mbstu.ac.bd/">
+                        <span>Information and Communication Technology</span>
+                    </a>
+                    <a href="https://te.mbstu.ac.bd/">
+                        <span>Textile Engineering</span>
+                    </a>
+                    <a href="https://me.mbstu.ac.bd/">
+                        <span>Mechanical Engineering</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Faculty of Life Science -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Life Science</div>
+                <div class="departments-dropdown">
+                    <a href="https://esrm.mbstu.ac.bd/">
+                        <span>Environmental Science and Resource Management</span>
+                    </a>
+                    <a href="https://cps.mbstu.ac.bd/">
+                        <span>Criminology and Police Science</span>
+                    </a>
+                    <a href="https://ftns.mbstu.ac.bd/">
+                        <span>Food Technology and Nutritional Science</span>
+                    </a>
+                    <a href="https://bge.mbstu.ac.bd/">
+                        <span>Biotechnology and Genetic Engineering</span>
+                    </a>
+                    <a href="https://bmb.mbstu.ac.bd/">
+                        <span>Biochemistry and Molecular Biology</span>
+                    </a>
+                    <a href="https://phar.mbstu.ac.bd/">
+                        <span>Pharmacy</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Faculty of Science -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Science</div>
+                <div class="departments-dropdown">
+                    <a href="https://chem.mbstu.ac.bd/">
+                        <span>Chemistry</span>
+                    </a>
+                    <a href="https://math.mbstu.ac.bd/">
+                        <span>Mathematics</span>
+                    </a>
+                    <a href="https://phy.mbstu.ac.bd/">
+                        <span>Physics</span>
+                    </a>
+                    <a href="https://stat.mbstu.ac.bd/">
+                        <span>Statistics</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Faculty of Business Studies -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Business Studies</div>
+                <div class="departments-dropdown">
+                    <a href="https://acct.mbstu.ac.bd/">
+                        <span>Accounting</span>
+                    </a>
+                    <a href="https://mgt.mbstu.ac.bd/">
+                        <span>Management</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Faculty of Social Science -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Social Science</div>
+                <div class="departments-dropdown">
+                    <a href="https://eco.mbstu.ac.bd/">
+                        <span>Economics</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Faculty of Arts -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Arts</div>
+                <div class="departments-dropdown">
+                    <a href="https://eng.mbstu.ac.bd/">
+                        <span>English</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Faculty of Veterinary Medicine -->
+            <div class="faculty-box">
+                <div class="faculty-title">Faculty of Veterinary Medicine and Animal Sciences</div>
+                <div class="departments-dropdown">
+                    <a href="https://mbstu.ac.bd/faculty-of-veterinary-medicine-and-animal-sciences/">
+                        <span>Veterinary Science and Animal Husbandry</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <img src="/shahinsir.png" alt="Supervisor" class="supervisor-photo">
+        <div class="supervisor-message">
+            <h3>Message from the Supervisor</h3>
+            <p>At MBSTU, we ignite the flame of knowledge, guiding students through the realms of science and technology. Rooted in the legacy of Mawlana Abdul Hamid Khan Bhashani, we champion justice, education, and empowerment. Our mission is to mold future leaders who are not only adept in their fields but also committed to societal betterment. Through innovation and academic excellence, we pave the way for a brighter tomorrow</p>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>© 2025 MYMBSTU. Serving the academic community since 1999</p>
+    </div>
+</footer>
+
+<script>
+    function navigate(service) {
+        // document.body.style.opacity = '0.7';
+        setTimeout(() => {
+            window.location.href = `/${service}`;
+        }, 300);
+    }
+
+    function confirmLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '/logout';
+        }
+    }
+
+    document.querySelectorAll('.nav-card').forEach(card => {
+        card.addEventListener('mouseover', () => {
+            card.style.transform = 'scale(1.02)';
+        });
+        card.addEventListener('mouseout', () => {
+            card.style.transform = 'scale(1)';
+        });
+        document.querySelectorAll('.faculty-title').forEach(title => {
+            if (title.textContent.trim() !== "Faculty of Veterinary Medicine and Animal Sciences") {
+                title.style.marginTop = "25px";
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

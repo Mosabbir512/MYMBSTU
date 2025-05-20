@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for ID Card - MYMBSTU</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/baro.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .apply-id-form {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .apply-id-form h1 {
+            margin-bottom: 1rem;
+            color: #007BFF;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .apply-id-form label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .apply-id-form input, .apply-id-form select, .apply-id-form textarea {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #f9f9f9;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .apply-id-form input:focus, .apply-id-form select:focus, .apply-id-form textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+        .apply-id-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .apply-id-form button:hover {
+            background: linear-gradient(135deg, #0056b3, #003f7f);
+        }
+    </style>
+</head>
+<body>
+
+<form class="apply-id-form" action="applyID" method="post" enctype="multipart/form-data">
+    <h1>Apply for ID Card</h1>
+
+    <label for="idCardType">ID Card Type:</label>
+    <select id="idCardType" name="idCardType" required>
+        <option value="">Select ID Card Type</option>
+        <option value="new">New ID Card</option>
+        <option value="Renew">Replacement</option>
+    </select>
+
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
+
+    <label for="fatherName">Father's Name:</label>
+    <input type="text" id="fatherName" name="fatherName" placeholder="Enter father's name" required>
+
+    <label for="motherName">Mother's Name:</label>
+    <input type="text" id="motherName" name="motherName" placeholder="Enter mother's name" required>
+
+    <label for="permanentAddress">Permanent Address:</label>
+    <textarea id="permanentAddress" name="permanentAddress" rows="4" placeholder="Enter permanent address" required></textarea>
+
+    <label for="photo">Attach Photo:</label>
+    <input type="file" id="photo" name="photo" accept="image/*" required>
+
+    <button type="submit">Submit Application</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - MYMBSTU</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* Adjusted to align the form to the top */
+      height: 100vh;
+      margin: 0;
+      padding-top: 1rem; /* Added padding to prevent cutting off the title */
+      box-sizing: border-box;
+    }
+    .register-form {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .register-form h1 {
+      margin-bottom: 1rem;
+      color: #007BFF;
+      text-align: center;
+    }
+    .register-form input,
+    .register-form select {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .register-form button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .register-form button:hover {
+      background-color: #0056b3;
+    }
+    .register-form a {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #007BFF;
+      text-decoration: none;
+    }
+    .register-form a:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<form class="register-form" th:action="@{/register}" method="post">
+  <h1>Register</h1>
+  <div th:if="${errorMessage}" class="error-message">
+    <p th:text="${errorMessage}"></p>
+  </div>
+  <input type="text" name="id" placeholder="Enter Student ID" required minlength="7">
+  <input type="text" name="username" placeholder="Enter Username" required minlength="8">
+  <input type="email" name="email" placeholder="Enter Email" required>
+  <input type="tel" name="phone" placeholder="Enter Phone Number" required minlength="8">
+  <input type="password" name="password" placeholder="Enter Password" required minlength="8">
+  <input type="password" name="confirmPassword" placeholder="Confirm Password" required minlength="8">
+
+  <!-- Department dropdown -->
+  <select name="department" required>
+    <option value="" disabled selected>Select Department</option>
+    <option value="ICT">ICT</option>
+    <option value="CSE">CSE</option>
+    <option value="TE">TE</option>
+    <option value="ME">ME</option>
+    <option value="ESRM">ESRM</option>
+    <option value="CPS">CPS</option>
+    <option value="FTNS">FTNS</option>
+    <option value="BGE">BGE</option>
+    <option value="BMB">BMB</option>
+    <option value="PH">PH</option>
+    <option value="CHEM">CHEM</option>
+    <option value="MATH">MATH</option>
+    <option value="PHY">PHY</option>
+    <option value="STAT">STAT</option>
+    <option value="AC">AC</option>
+    <option value="MNG">MNG</option>
+    <option value="ECO">ECO</option>
+    <option value="ENG">ENG</option>
+  </select>
+  <select name="session2" required>
+    <option value="" disabled selected>Select Your Session</option>
+    <option value="2023-24">2023-24</option>
+    <option value="2022-23">2022-23</option>
+    <option value="2021-22">2021-22</option>
+    <option value="2020-21">2020-21</option>
+    <option value="2019-20">2019-20</option>
+    <option value="2018-19">2018-19</option>
+    <option value="2017-18">2017-18</option>
+    <option value="2016-17">2016-17</option>
+    <option value="2015-16">2015-16</option>
+    <option value="2014-15">2014-15</option>
+    <option value="2013-14">2013-14</option>
+    <option value="2012-13">2012-13</option>
+    <option value="2011-12">2011-12</option>
+    <option value="2010-11">2010-11</option>
+    <option value="2009-10">2009-10</option>
+    <option value="2008-09">2008-09</option>
+    <option value="2007-08">2007-08</option>
+    <option value="2006-07">2006-07</option>
+    <option value="2005-06">2005-06</option>
+    <option value="2004-05">2004-05</option>
+    <option value="2003-04">2003-04</option>
+    <option value="2002-03">2002-03</option>
+  </select>
+
+  <select name="hallName" id="hallName" required>
+    <option value="" disabled selected>Select Your HallName</option>
+    <option value="Jananeta Abdul Mannan Hall">Jananeta Abdul Mannan Hall</option>
+    <option value="Bangabandhu Sheikh Mujibur Rahman Hall">Bangabandhu Sheikh Mujibur Rahman Hall</option>
+    <option value="Shahid Ziaur Rahman Hall">Shahid Ziaur Rahman Hall</option>
+    <option value="Sheikh Rasel Hall">Sheikh Rasel Hall</option>
+    <option value="Alema Khatun Bhashani Hall">Alema Khatun Bhashani Hall</option>
+    <option value="Shaheed Janani Jahanara Imam Hall">Shaheed Janani Jahanara Imam Hall</option>
+    <option value="Bangamata Sheikh Fazilatunnesa Mujib Hall">Bangamata Sheikh Fazilatunnesa Mujib Hall</option>
+    <option value="Bangamata Sheikh Fazilatunnesa Mujib Hall (Sirajganj campus)">
+      Bangamata Sheikh Fazilatunnesa Mujib Hall (Sirajganj campus)
+    </option>
+    <option value="Shaheed M. Monsur Ali Hall (Sirajganj campus)">Shaheed M. Monsur Ali Hall (Sirajganj campus)</option>
+  </select>
+
+
+
+  <button type="submit">Register</button>
+  <a href="/login">Already have an account? Login</a>
+</form>
+
+</body>
+</html>

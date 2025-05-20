@@ -1,0 +1,1053 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>MyMBSTU - Notice Generation</title>-->
+<!--    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">-->
+<!--    <style>-->
+<!--        /* Base Styles */-->
+<!--        * {-->
+<!--            box-sizing: border-box;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--        }-->
+
+<!--        body {-->
+<!--            font-family: 'Poppins', sans-serif;-->
+<!--            background-color: #f8f9fa;-->
+<!--            color: #333;-->
+<!--            line-height: 1.6;-->
+<!--        }-->
+
+<!--        /* Navbar Styles (unchanged) */-->
+<!--        .navbar {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--            padding: 1rem 2rem;-->
+<!--            background: white;-->
+<!--            box-shadow: 0 2px 10px rgba(0,0,0,0.1);-->
+<!--            position: fixed;-->
+<!--            width: 100%;-->
+<!--            top: 0;-->
+<!--            z-index: 1000;-->
+<!--        }-->
+
+<!--        .nav-brand {-->
+<!--            font-size: 1.5rem;-->
+<!--            font-weight: bold;-->
+<!--            color: #2c3e50;-->
+<!--            text-decoration: none;-->
+<!--            white-space: nowrap;-->
+<!--        }-->
+
+<!--        .nav-menu {-->
+<!--            display: flex;-->
+<!--            list-style: none;-->
+<!--            gap: 0.5rem;-->
+<!--            align-items: center;-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            flex-wrap: wrap;-->
+<!--            justify-content: flex-end;-->
+<!--        }-->
+
+<!--        .nav-menu li {-->
+<!--            white-space: nowrap;-->
+<!--        }-->
+
+<!--        .nav-menu li a, .nav-menu li button {-->
+<!--            text-decoration: none;-->
+<!--            color: #2c3e50;-->
+<!--            padding: 0.5rem 1rem;-->
+<!--            border-radius: 8px;-->
+<!--            transition: all 0.3s ease;-->
+<!--            display: inline-block;-->
+<!--            font-size: 0.95rem;-->
+<!--        }-->
+
+<!--        .nav-menu li a:hover, .nav-menu li button:hover {-->
+<!--            background: rgba(0,206,209,0.1);-->
+<!--            color: #00CED1;-->
+<!--        }-->
+
+<!--        /* Main Content */-->
+<!--        .container {-->
+<!--            max-width: 1200px;-->
+<!--            margin: 80px auto 0;-->
+<!--            padding: 30px;-->
+<!--        }-->
+
+<!--        /* Alert Messages */-->
+<!--        .alert {-->
+<!--            padding: 15px;-->
+<!--            margin-bottom: 20px;-->
+<!--            border-radius: 5px;-->
+<!--            font-weight: 500;-->
+<!--        }-->
+
+<!--        .alert-success {-->
+<!--            background-color: #d4edda;-->
+<!--            color: #155724;-->
+<!--            border: 1px solid #c3e6cb;-->
+<!--        }-->
+
+<!--        .alert-error {-->
+<!--            background-color: #f8d7da;-->
+<!--            color: #721c24;-->
+<!--            border: 1px solid #f5c6cb;-->
+<!--        }-->
+
+<!--        /* Notice Form */-->
+<!--        .notice-form {-->
+<!--            background: white;-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);-->
+<!--            padding: 40px;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        .form-title {-->
+<!--            color: #004080;-->
+<!--            text-align: center;-->
+<!--            margin-bottom: 30px;-->
+<!--            font-size: 1.8rem;-->
+<!--            position: relative;-->
+<!--            padding-bottom: 15px;-->
+<!--        }-->
+
+<!--        .form-title::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            bottom: 0;-->
+<!--            left: 50%;-->
+<!--            transform: translateX(-50%);-->
+<!--            width: 80px;-->
+<!--            height: 3px;-->
+<!--            background: #00CED1;-->
+<!--        }-->
+
+<!--        .form-group {-->
+<!--            margin-bottom: 25px;-->
+<!--        }-->
+
+<!--        .form-group label {-->
+<!--            display: block;-->
+<!--            margin-bottom: 8px;-->
+<!--            font-weight: 500;-->
+<!--            color: #004080;-->
+<!--        }-->
+
+<!--        .form-group input[type="text"],-->
+<!--        .form-group select,-->
+<!--        .form-group textarea {-->
+<!--            width: 100%;-->
+<!--            padding: 12px 15px;-->
+<!--            border: 1px solid #ddd;-->
+<!--            border-radius: 6px;-->
+<!--            font-family: inherit;-->
+<!--            font-size: 1rem;-->
+<!--            transition: border-color 0.3s;-->
+<!--        }-->
+
+<!--        .form-group input[type="text"]:focus,-->
+<!--        .form-group select:focus,-->
+<!--        .form-group textarea:focus {-->
+<!--            outline: none;-->
+<!--            border-color: #00CED1;-->
+<!--            box-shadow: 0 0 0 2px rgba(0,206,209,0.2);-->
+<!--        }-->
+
+<!--        .form-group textarea {-->
+<!--            min-height: 150px;-->
+<!--            resize: vertical;-->
+<!--        }-->
+
+<!--        /* File Upload Styling */-->
+<!--        .file-input {-->
+<!--            display: none;-->
+<!--        }-->
+
+<!--        .file-label {-->
+<!--            display: inline-block;-->
+<!--            padding: 10px 15px;-->
+<!--            background: #f0f0f0;-->
+<!--            border: 1px dashed #aaa;-->
+<!--            border-radius: 6px;-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s;-->
+<!--        }-->
+
+<!--        .file-label:hover {-->
+<!--            background: #e0e0e0;-->
+<!--            border-color: #00CED1;-->
+<!--        }-->
+
+<!--        .file-name {-->
+<!--            display: inline-block;-->
+<!--            margin-left: 10px;-->
+<!--            color: #666;-->
+<!--        }-->
+
+<!--        /* Submit Button */-->
+<!--        .submit-btn {-->
+<!--            display: block;-->
+<!--            width: 100%;-->
+<!--            padding: 15px;-->
+<!--            background: #004080;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 6px;-->
+<!--            font-size: 1rem;-->
+<!--            font-weight: 500;-->
+<!--            cursor: pointer;-->
+<!--            transition: background 0.3s;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        .submit-btn:hover {-->
+<!--            background: #003366;-->
+<!--        }-->
+
+<!--        /* Responsive Design */-->
+<!--        @media (max-width: 768px) {-->
+<!--            .container {-->
+<!--                padding: 20px;-->
+<!--            }-->
+
+<!--            .notice-form {-->
+<!--                padding: 30px;-->
+<!--            }-->
+<!--        }-->
+
+<!--        @media (max-width: 576px) {-->
+<!--            .container {-->
+<!--                padding: 15px;-->
+<!--            }-->
+
+<!--            .notice-form {-->
+<!--                padding: 20px;-->
+<!--            }-->
+
+<!--            .form-title {-->
+<!--                font-size: 1.5rem;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--&lt;!&ndash; Navbar (unchanged) &ndash;&gt;-->
+<!--<nav class="navbar">-->
+<!--    <a href="/home" class="nav-brand">MYMBSTU</a>-->
+<!--    <ul class="nav-menu">-->
+<!--        <li><a href="/home">Home</a></li>-->
+<!--        <li><a href="/admission">Admission</a></li>-->
+<!--        <li><a href="/admission/notice">Notice</a></li>-->
+<!--        <li><a href="/admission/applyAdmission">Apply</a></li>-->
+<!--        &lt;!&ndash; For Provost &ndash;&gt;-->
+<!--        <li th:if="${user != null && user.role == 'PROVOST'}"><a href="/admission/provost1/noticegen">Notice Gen</a></li>-->
+<!--        <li th:if="${user != null && user.role == 'PROVOST'}"><a href="/admission/management">Management</a></li>-->
+<!--    </ul>-->
+<!--</nav>-->
+
+<!--&lt;!&ndash; Main Content &ndash;&gt;-->
+<!--<div class="container">-->
+<!--    &lt;!&ndash; Success/Error Messages &ndash;&gt;-->
+<!--    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>-->
+<!--    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>-->
+
+<!--    <div class="notice-form">-->
+<!--        <h2 class="form-title">Generate New Notice</h2>-->
+<!--        <form th:action="@{/admission/provost1/noticegen}" method="post" enctype="multipart/form-data">-->
+<!--            <div class="form-group">-->
+<!--                <label for="title">Notice Title</label>-->
+<!--                <input type="text" id="title" name="title" th:value="${notice?.title}" required-->
+<!--                       placeholder="Enter notice title">-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="noticeType">Notice Type</label>-->
+<!--                <select id="noticeType" name="noticeType" required>-->
+<!--                    <option value="">Select Notice Type</option>-->
+<!--                    <option value="ADMISSION">Admission</option>-->
+
+<!--                </select>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="description">Notice Description</label>-->
+<!--                <textarea id="description" name="description" th:text="${notice?.description}" required-->
+<!--                          placeholder="Enter detailed notice description"></textarea>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="file">Attachment (Optional)</label>-->
+<!--                <div style="margin-top: 8px;">-->
+<!--                    <input type="file" id="file" name="file" class="file-input">-->
+<!--                    <label for="file" class="file-label">-->
+<!--                        <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">attach_file</i>-->
+<!--                        Choose File-->
+<!--                    </label>-->
+<!--                    <span id="file-name" class="file-name">No file chosen</span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <button type="submit" class="submit-btn">-->
+<!--                <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">send</i>-->
+<!--                Generate Notice-->
+<!--            </button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    // Display selected file name-->
+<!--    document.getElementById('file').addEventListener('change', function(e) {-->
+<!--        const fileName = e.target.files.length ? e.target.files[0].name : 'No file chosen';-->
+<!--        document.getElementById('file-name').textContent = fileName;-->
+<!--    });-->
+
+<!--    // Close dropdown when clicking outside-->
+<!--    document.addEventListener('click', function(e) {-->
+<!--        if (!e.target.matches('.sidebar-menu li a')) {-->
+<!--            const dropdowns = document.querySelectorAll('.dropdown-content');-->
+<!--            dropdowns.forEach(dropdown => {-->
+<!--                if (dropdown.style.display === 'block') {-->
+<!--                    dropdown.style.display = 'none';-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMBSTU - Notice Generation</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-menu li {
+            white-space: nowrap;
+        }
+
+        .nav-menu li a, .nav-menu li button {
+            text-decoration: none;
+            color: #2c3e50;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.95rem;
+        }
+
+        .nav-menu li a:hover, .nav-menu li button:hover {
+            background: rgba(0,206,209,0.1);
+            color: #00CED1;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 30px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Notice Form */
+        .notice-form {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-top: 20px;
+        }
+
+        .form-title {
+            color: #004080;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #00CED1;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #004080;
+        }
+
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00CED1;
+            box-shadow: 0 0 0 2px rgba(0,206,209,0.2);
+        }
+
+        /* Editor Styles */
+        .editor-container {
+            position: relative;
+        }
+
+        #description-editor {
+            min-height: 300px;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: white;
+        }
+
+        #description-editor:focus {
+            border-color: #00CED1;
+            outline: none;
+        }
+
+        .editable-date {
+            color: #004080;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            background-color: rgba(0, 206, 209, 0.1);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        .editable-date:hover {
+            background-color: rgba(0, 206, 209, 0.3);
+        }
+
+        /* File Upload Styling */
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: 1px dashed #aaa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: #e0e0e0;
+            border-color: #00CED1;
+        }
+
+        .file-name {
+            display: inline-block;
+            margin-left: 10px;
+            color: #666;
+        }
+
+        /* Custom Message Controls */
+        .message-controls {
+            margin-top: 15px;
+        }
+
+        .add-message-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .add-message-btn:hover {
+            background: #2980b9;
+        }
+
+        .custom-message-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .message-buttons {
+            display: none;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .insert-message-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-message-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Date Info */
+        .date-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #004080;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #003366;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .notice-form {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 15px;
+            }
+
+            .notice-form {
+                padding: 20px;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="/home" class="nav-brand">MYMBSTU</a>
+    <ul class="nav-menu">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/admission">Admission</a></li>
+        <li><a href="/admission/notice">Notice</a></li>
+        <li><a href="/admission/applyAdmission">Apply</a></li>
+        <!-- For Provost -->
+        <li th:if="${user != null && user.role == 'ADMIN'}"><a href="/admission/provost1/noticegen">Notice Gen</a></li>
+        <li th:if="${user != null && user.role == 'ADMIN'}"><a href="/admission/management">Management</a></li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="notice-form">
+        <h2 class="form-title">Generate New Notice</h2>
+        <form th:action="@{/admission/provost1/noticegen}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Notice Title</label>
+                <input type="text" id="title" name="title" th:value="${notice?.title}" required
+                       placeholder="Enter notice title">
+            </div>
+
+            <div class="form-group">
+                <label for="noticeType">Notice Type</label>
+                <select id="noticeType" name="noticeType" required>
+                    <option value="">Select Notice Type</option>
+                    <option value="ADMISSION">Admission</option>
+                    <option value="VivaAdm">Viva</option>
+                    <option value="PaymentAdm">Payment</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Notice Description</label>
+                <textarea id="description" name="description" th:text="${notice?.description}" required style="display: none;"></textarea>
+                <div class="editor-container">
+                    <div id="description-editor" class="description-editor" contenteditable="true"></div>
+
+                    <!-- Add Custom Message Section -->
+                    <div class="message-controls">
+                        <button type="button" id="add-message-btn" class="add-message-btn">
+                            <i class="material-icons" style="vertical-align: middle; font-size: 1rem;">add</i> Add Custom Message
+                        </button>
+                        <input type="text" id="custom-message-input" class="custom-message-input" placeholder="Enter your additional message...">
+                        <div class="message-buttons" id="message-buttons">
+                            <button type="button" id="insert-message-btn" class="insert-message-btn">Insert</button>
+                            <button type="button" id="cancel-message-btn" class="cancel-message-btn">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields for dates -->
+                    <input type="hidden" id="startDate" name="startDate">
+                    <input type="hidden" id="endDate" name="endDate">
+                    <div class="date-info" id="date-info">
+                        Dates set: <span id="start-date-display"></span> to <span id="end-date-display"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="file">Attachment (Optional)</label>
+                <div style="margin-top: 8px;">
+                    <input type="file" id="file" name="file" class="file-input">
+                    <label for="file" class="file-label">
+                        <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">attach_file</i>
+                        Choose File
+                    </label>
+                    <span id="file-name" class="file-name">No file chosen</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">send</i>
+                Generate Notice
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show selected file name
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        // Auto-fill description based on notice type
+        document.getElementById('noticeType').addEventListener('change', function(e) {
+            const noticeType = e.target.value;
+            const descriptionTextarea = document.getElementById('description');
+            const descriptionEditor = document.getElementById('description-editor');
+            const dateInfo = document.getElementById('date-info');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // Reset dates when notice type changes
+            startDateInput.value = '';
+            endDateInput.value = '';
+            dateInfo.style.display = 'none';
+
+            // Define predefined texts with date placeholders
+            const predefinedTexts = {
+                'ADMISSION': `Mawlana Bhashani Science and Technology University
+Office of the Controller of Examinations
+
+Notice Regarding Admission into M.Sc. Programs
+Date: [startDate]
+
+It is hereby informed that students interested in getting admitted into the M.Sc. programs under various departments for the session 2024-2025 are requested to complete the admission process within the prescribed schedule. The detailed schedule and required documents are as follows:
+
+Conditions for Admission to M.Sc. Program at MBSTU:
+1. Bachelor's Degree Requirement:
+   Candidates must have completed a 4-year B.Sc. (Hons) degree or an equivalent degree in a relevant subject.
+
+2. Minimum CGPA:
+   A minimum CGPA as per department requirement (not always specified in this general notice, often announced by respective departments).
+
+3. No Third Class/Division:
+   Applicants must not have any third class/division in any public examination (SSC, HSC, or equivalent).
+
+4. Academic Background:
+   Candidates must have an academic background relevant to the department offering the M.Sc. program (e.g., for ICT M.Sc., a background in ICT, CSE, EEE, etc.).
+
+5. Additional Departmental Requirements:
+   Some departments may take viva-voce/interviews or set additional conditions for admission, which are notified by the department specifically.
+
+Admission Schedule:
+Department       Admission Date       Time            Room No.
+[Department]    [startDate] to [endDate] [Time]      [Room Number]
+
+Required Documents:
+1. Printed copy of admission application form.
+2. All original academic certificates and mark sheets.
+3. Photocopies of certificates (attested).
+4. 3 recent passport-size photographs.
+5. Payment slip (Admission Fee: [amount]).
+
+Failure to complete admission within the deadline will result in cancellation of the admission eligibility.
+
+For any queries, please contact the respective department office.
+
+Signed by
+Controller of Examinations
+MBSTU`,
+                'VivaAdm': `Dear students,
+
+Your viva voce examination for admission will be held on [startDate]. Please bring all required documents and be present at least 30 minutes before your scheduled time.`,
+                'PaymentAdm': `Attention all students,
+
+The payment deadline for the current semester is [endDate]. Please complete your
+ through the designated bank or online portal before this date to avoid late fees.`
+            };
+
+            if (!noticeType || !predefinedTexts[noticeType]) {
+                descriptionTextarea.style.display = 'block';
+                descriptionEditor.style.display = 'none';
+                descriptionTextarea.value = '';
+            } else {
+                // Only replace if the current content is empty or matches a template
+                if (!descriptionEditor.textContent.trim() ||
+                    Object.values(predefinedTexts).includes(descriptionEditor.textContent.trim())) {
+                    descriptionTextarea.value = predefinedTexts[noticeType];
+                    replacePlaceholdersWithEditableDates();
+                }
+            }
+        });
+
+        // Custom message functionality
+        document.getElementById('add-message-btn').addEventListener('click', function() {
+            const messageInput = document.getElementById('custom-message-input');
+            const messageButtons = document.getElementById('message-buttons');
+
+            messageInput.style.display = 'block';
+            messageButtons.style.display = 'flex';
+            this.style.display = 'none';
+
+            messageInput.focus();
+        });
+
+        document.getElementById('insert-message-btn').addEventListener('click', function() {
+            const messageInput = document.getElementById('custom-message-input');
+            const descriptionEditor = document.getElementById('description-editor');
+            const addMessageBtn = document.getElementById('add-message-btn');
+
+            if (messageInput.value.trim()) {
+                // Insert at cursor position or at the end
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    range.insertNode(document.createTextNode(messageInput.value));
+                } else {
+                    descriptionEditor.innerHTML += `<p>${messageInput.value}</p>`;
+                }
+
+                // Update the hidden textarea
+                document.getElementById('description').value = descriptionEditor.innerText;
+            }
+
+            // Reset the message input
+            messageInput.value = '';
+            messageInput.style.display = 'none';
+            this.parentElement.style.display = 'none';
+            addMessageBtn.style.display = 'inline-block';
+        });
+
+        document.getElementById('cancel-message-btn').addEventListener('click', function() {
+            const messageInput = document.getElementById('custom-message-input');
+            const messageButtons = document.getElementById('message-buttons');
+            const addMessageBtn = document.getElementById('add-message-btn');
+
+            messageInput.value = '';
+            messageInput.style.display = 'none';
+            messageButtons.style.display = 'none';
+            addMessageBtn.style.display = 'inline-block';
+        });
+
+        function replacePlaceholdersWithEditableDates() {
+            const descriptionTextarea = document.getElementById('description');
+            const descriptionEditor = document.getElementById('description-editor');
+            const content = descriptionTextarea.value;
+            const dateInfo = document.getElementById('date-info');
+
+            // Replace placeholders with editable spans
+            let newContent = content
+                .replace(/\[startDate\]/g, `<span class="editable-date" data-date-type="start">DD/MM/YYYY</span>`)
+                .replace(/\[endDate\]/g, `<span class="editable-date" data-date-type="end">DD/MM/YYYY</span>`);
+
+            // Update the editor
+            descriptionEditor.innerHTML = newContent;
+            descriptionTextarea.value = descriptionEditor.innerText;
+
+            // Add date picker functionality to the editable dates
+            document.querySelectorAll('.editable-date').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    showDatePicker(this);
+                });
+            });
+
+            // Show date info if dates are already set
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            if (startDateInput.value && endDateInput.value) {
+                updateDateInfoDisplay();
+            }
+        }
+
+        function showDatePicker(element) {
+            // Create a date input element
+            const dateInput = document.createElement('input');
+            dateInput.type = 'date';
+            dateInput.style.position = 'absolute';
+            dateInput.style.left = `${element.getBoundingClientRect().left}px`;
+            dateInput.style.top = `${element.getBoundingClientRect().bottom}px`;
+            dateInput.style.zIndex = '1000';
+            dateInput.style.padding = '8px';
+            dateInput.style.border = '1px solid #004080';
+            dateInput.style.borderRadius = '5px';
+            dateInput.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+
+            // When date is selected, update the element
+            dateInput.addEventListener('change', function() {
+                if (!this.value) return; // If user cleared the date picker
+
+                const date = new Date(this.value);
+                const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+                element.textContent = formattedDate;
+                document.body.removeChild(dateInput);
+
+                // Update the hidden date fields and display
+                updateHiddenDateFields();
+                updateDateInfoDisplay();
+            });
+
+            // Add to document
+            document.body.appendChild(dateInput);
+            dateInput.focus();
+
+            // Remove date picker if clicked outside
+            const clickOutsideHandler = (e) => {
+                if (!dateInput.contains(e.target)) {
+                    document.body.removeChild(dateInput);
+                    document.removeEventListener('click', clickOutsideHandler);
+                }
+            };
+            document.addEventListener('click', clickOutsideHandler);
+        }
+
+        function updateHiddenDateFields() {
+            const descriptionEditor = document.getElementById('description-editor');
+            const descriptionTextarea = document.getElementById('description');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // Update the hidden textarea
+            descriptionTextarea.value = descriptionEditor.innerText;
+
+            // Find and update the date fields
+            const dates = descriptionEditor.querySelectorAll('.editable-date');
+            dates.forEach(el => {
+                const dateType = el.getAttribute('data-date-type');
+                const dateText = el.textContent;
+
+                if (dateText.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                    const [day, month, year] = dateText.split('/');
+                    const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+                    if (dateType === 'start') {
+                        startDateInput.value = isoDate;
+                    } else if (dateType === 'end') {
+                        endDateInput.value = isoDate;
+                    }
+                } else {
+                    // Clear the date if it's not in the correct format
+                    if (dateType === 'start') {
+                        startDateInput.value = '';
+                    } else if (dateType === 'end') {
+                        endDateInput.value = '';
+                    }
+                }
+            });
+        }
+
+        function updateDateInfoDisplay() {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const dateInfo = document.getElementById('date-info');
+            const startDateDisplay = document.getElementById('start-date-display');
+            const endDateDisplay = document.getElementById('end-date-display');
+
+            if (startDateInput.value && endDateInput.value) {
+                const [startYear, startMonth, startDay] = startDateInput.value.split('-');
+                const [endYear, endMonth, endDay] = endDateInput.value.split('-');
+
+                startDateDisplay.textContent = `${startDay}/${startMonth}/${startYear}`;
+                endDateDisplay.textContent = `${endDay}/${endMonth}/${endYear}`;
+                dateInfo.style.display = 'block';
+            } else {
+                dateInfo.style.display = 'none';
+            }
+        }
+
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const descriptionEditor = document.getElementById('description-editor');
+            const descriptionTextarea = document.getElementById('description');
+            descriptionTextarea.value = descriptionEditor.innerText;
+        });
+
+        // Initialize the editor
+        const descriptionTextarea = document.getElementById('description');
+        const descriptionEditor = document.getElementById('description-editor');
+
+        // Set initial content
+        if (descriptionTextarea.value) {
+            descriptionEditor.innerHTML = descriptionTextarea.value;
+
+            // Add click handlers for any existing date spans
+            descriptionEditor.querySelectorAll('.editable-date').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    showDatePicker(this);
+                });
+            });
+        }
+
+        descriptionEditor.addEventListener('blur', function() {
+            updateHiddenDateFields();
+        });
+
+        // Hide message buttons initially
+        document.getElementById('message-buttons').style.display = 'none';
+        document.getElementById('custom-message-input').style.display = 'none';
+        document.getElementById('date-info').style.display = 'none';
+    });
+</script>
+</body>
+</html>

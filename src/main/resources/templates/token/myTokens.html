@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tokens - MBSTU</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: url('/bsmrh.jpg') no-repeat center center/cover;
+      color: #fff;
+    }
+
+    .main {
+      width: 100%;
+      min-height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(31, 2, 10, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e67e22;
+    }
+
+    .token-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .token-table th, .token-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .token-table th {
+      background-color: rgba(230, 126, 34, 0.7);
+    }
+
+    .download-btn {
+      background: #e67e22;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+    }
+
+    .download-btn:hover {
+      background: #cf711f;
+    }
+
+    .status-valid {
+      color: #2ecc71;
+    }
+
+    .status-expired {
+      color: #e74c3c;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: #3498db;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+<div class="main">
+  <div class="container">
+    <h1>My Meal Tokens</h1>
+
+    <table class="token-table">
+      <thead>
+      <tr>
+        <th>Token Number</th>
+        <th>Meal Type</th>
+        <th>Hall</th>
+        <th>Valid Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="token : ${tokens}">
+        <td th:text="${token.tokenNumber}"></td>
+        <td th:text="${token.mealType}"></td>
+        <td th:text="${token.hallName}"></td>
+        <td th:text="${token.mealDate}"></td>
+        <td th:class="${token.mealDate == T(java.time.LocalDate).now().toString() ? 'status-valid' : 'status-expired'}">
+          <span th:text="${token.mealDate == T(java.time.LocalDate).now().toString() ? 'Valid' : 'Expired'}"></span>
+        </td>
+        <td>
+          <a th:href="@{'/token/download/' + ${token.tokenNumber}}"
+             class="download-btn">Download</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <a href="/token" class="back-btn">Back to Token Purchase</a>
+  </div>
+</div>
+</body>
+</html>

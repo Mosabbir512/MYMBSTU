@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Seat - MYMBSTU</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/baro.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .request-seat-container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .application-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .application-info h2 {
+            color: #148F77;
+            margin-bottom: 0.5rem;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+
+        .time-box {
+            background: #E8F8F5;
+            padding: 0.8rem;
+            border-radius: 10px;
+            flex: 1;
+            margin: 0 0.5rem;
+        }
+
+        .time-label {
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 0.3rem;
+        }
+
+        .time-value {
+            font-weight: bold;
+            color: #148F77;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+
+        .status-open {
+            background: #D5F5E3;
+            color: #28a745;
+        }
+
+        .status-closed {
+            background: #FADBD8;
+            color: #dc3545;
+        }
+
+        .request-seat-form {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .request-seat-form h1 {
+            margin-bottom: 1.5rem;
+            color: #148F77;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .request-seat-form h3 {
+            color: #148F77;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .request-seat-form label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .request-seat-form input,
+        .request-seat-form textarea,
+        .request-seat-form select {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #f9f9f9;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .request-seat-form input:focus,
+        .request-seat-form textarea:focus,
+        .request-seat-form select:focus {
+            border-color: #148F77;
+            box-shadow: 0 0 5px rgba(20, 143, 119, 0.5);
+            outline: none;
+        }
+
+        .request-seat-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #148F77, #117A65);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .request-seat-form button:hover {
+            background: linear-gradient(135deg, #117A65, #0E6251);
+        }
+
+        .request-seat-form button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .file-upload-label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="request-seat-container">
+    <div class="application-info">
+        <h2>Hall Seat Application</h2>
+
+        <div class="time-info" th:if="${noticeStarted != null}">
+            <div class="time-box">
+                <div class="time-label">Application Starts</div>
+                <div class="time-value" th:text="${#dates.format(noticeStarted, 'dd MMM yyyy')}"></div>
+            </div>
+            <div class="time-box">
+                <div class="time-label">Application Ends</div>
+                <div class="time-value" th:text="${#dates.format(applicationEnd, 'dd MMM yyyy')}"></div>
+            </div>
+        </div>
+
+        <div th:if="${canApply}" class="status-message status-open">
+            Applications are currently being accepted until
+            <span th:text="${#dates.format(applicationEnd, 'dd MMM yyyy')}"></span>
+        </div>
+        <div th:unless="${canApply}" class="status-message status-closed">
+            <span th:if="${noticeStarted == null}">Application period has not been announced yet</span>
+            <span th:if="${noticeStarted != null && #dates.createNow().before(noticeStarted)}">
+        Application period will start on
+        <span th:text="${#dates.format(noticeStarted, 'dd MMM yyyy')}"></span>
+      </span>
+            <span th:if="${noticeStarted != null && #dates.createNow().after(applicationEnd)}">
+        Application period ended on
+        <span th:text="${#dates.format(applicationEnd, 'dd MMM yyyy')}"></span>
+      </span>
+        </div>
+
+    </div>
+
+    <form class="request-seat-form" action="/applySeat" method="post" th:if="${canApply}" enctype="multipart/form-data">
+        <h1>Hall Seat Application Form</h1>
+
+        <!-- Family Information Section -->
+        <h3>Family Information</h3>
+
+        <div class="form-row">
+            <div class="form-col">
+                <label for="fatherName">Father's Name:</label>
+                <input type="text" name="fatherName" id="fatherName" placeholder="Enter father's name" required>
+            </div>
+            <div class="form-col">
+                <label for="motherName">Mother's Name:</label>
+                <input type="text" name="motherName" id="motherName" placeholder="Enter mother's name" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-col">
+                <label for="fatherOccupation">Father's Occupation:</label>
+                <input type="text" name="fatherOccupation" id="fatherOccupation" placeholder="Enter father's occupation"
+                       required>
+            </div>
+            <div class="form-col">
+                <label for="motherOccupation">Mother's Occupation:</label>
+                <input type="text" name="motherOccupation" id="motherOccupation" placeholder="Enter mother's occupation"
+                       required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-col">
+                <label for="fatherPhone">Father's Phone Number:</label>
+                <input type="tel" name="fatherPhone" id="fatherPhone" placeholder="Enter father's phone number"
+                       required>
+            </div>
+            <div class="form-col">
+                <label for="familyIncome">Family Monthly Income (BDT):</label>
+                <input type="number" name="familyIncome" id="familyIncome" placeholder="Enter monthly income" required>
+            </div>
+        </div>
+
+        <!-- Address Information -->
+        <h3>Address Information</h3>
+
+        <label for="permanentAddress">Permanent Address:</label>
+        <input type="text" name="permanentAddress" id="permanentAddress" placeholder="Enter permanent address" required>
+
+        <label for="presentAddress">Present Address (if different):</label>
+        <input type="text" name="presentAddress" id="presentAddress" placeholder="Enter present address">
+
+        <!-- Academic Information -->
+        <h3>Academic Information</h3>
+
+        <div class="form-row">
+            <div class="form-col">
+                <label for="lastSemesterResult">Last Semester GPA:</label>
+                <input type="text" name="lastSemesterResult" id="lastSemesterResult"
+                       placeholder="Enter last semester GPA" required>
+            </div>
+            <div class="form-col">
+                <label for="currentCGPA">Current CGPA:</label>
+                <input type="text" name="currentCGPA" id="currentCGPA" placeholder="Enter current CGPA" required>
+            </div>
+        </div>
+
+        <label for="hallName">Preferred Hall:</label>
+        <select name="hallName" id="hallName" required>
+            <option value="">Select Hall</option>
+            <option value="Jananeta Abdul Mannan Hall">Jananeta Abdul Mannan Hall</option>
+            <option value="Bangabandhu Sheikh Mujibur Rahman Hall">Bangabandhu Sheikh Mujibur Rahman Hall</option>
+            <option value="Sheikh Rasel Hall">Sheikh Rasel Hall</option>
+            <option value="Shahid Ziaur Rahman Hall">Shahid Ziaur Rahman Hall</option>
+            <option value="Alema Khatun Bhashani Hall">Alema Khatun Bhashani Hall</option>
+            <option value="Bangamata Sheikh Fazilatunnesa Mujib Hall">Bangamata Sheikh Fazilatunnesa Mujib Hall</option>
+            <option value="Shaheed Janani Jahanara Imam Hall">Shaheed Janani Jahanara Imam Hall</option>
+
+        </select>
+
+        <!-- Documents and Reason -->
+        <h3>Documents & Reason</h3>
+
+        <label for="reason">Reason for Seat Request:</label>
+        <textarea name="reason" id="reason" rows="5" placeholder="Explain why you need a hall seat in detail"
+                  required></textarea>
+
+        <div class="form-row">
+            <div class="form-col">
+                <label for="lastSemesterGradeSheet" class="file-upload-label">Last Semester Grade Sheet:</label>
+                <input type="file" name="lastSemesterGradeSheet" id="lastSemesterGradeSheet"
+                       accept=".pdf,.jpg,.jpeg,.png" required>
+                <p class="file-upload-hint">Upload PDF or image file (max 2MB)</p>
+            </div>
+            <div class="form-col">
+                <label for="picture" class="file-upload-label">Your Recent Photo:</label>
+                <input type="file" name="picture" id="picture" accept=".jpg,.jpeg,.png" required>
+                <p class="file-upload-hint">Upload passport size photo (max 1MB)</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 1.5rem 0;">
+            <input type="checkbox" id="declaration" name="declaration" required>
+            <label for="declaration">I declare that all information provided is true and correct to the best of my
+                knowledge.</label>
+        </div>
+
+        <button type="submit">Submit Application</button>
+    </form>
+
+    <div th:unless="${canApply}" class="request-seat-form">
+        <h1>Application Not Available</h1>
+        <p style="text-align: center; margin-bottom: 1.5rem;">
+            The seat application is currently not available. Please check back during the application period.
+        </p>
+        <button disabled>Submit Request</button>
+    </div>
+</div>
+</body>
+</html>

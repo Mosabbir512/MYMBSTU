@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Purchase Successful - MBSTU</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: url('/bsmrh.jpg') no-repeat center center/cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .main {
+      width: 100%;
+      min-height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(31, 2, 10, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 800px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e67e22;
+    }
+    .token-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .token-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .download-btn {
+      background: #e67e22;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .home-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .receipt {
+      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .button-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="main">
+  <div class="container">
+    <h1>Token Purchase Successful</h1>
+
+    <div th:each="token : ${tokens}">
+      <div class="token-card">
+        <div class="token-info">
+          <span>Token Number:</span>
+          <strong th:text="${token.tokenNumber}"></strong>
+        </div>
+        <div class="token-info">
+          <span>Meal Type:</span>
+          <span th:text="${token.mealType}"></span>
+        </div>
+        <div class="token-info">
+          <span>Hall:</span>
+          <span th:text="${token.hallName}"></span>
+        </div>
+        <div class="token-info">
+          <span>Valid Date:</span>
+          <span th:text="${token.mealDate}"></span>
+        </div>
+        <div class="button-container">
+          <a th:href="@{'/token/download/' + ${token.tokenNumber}}"
+             class="download-btn">Download Token</a>
+          <a th:href="@{/about_hall_man}" class="home-btn">Back to Services</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="receipt">
+      <h3>Payment Receipt</h3>
+      <div class="token-info">
+        <span>Total Tokens:</span>
+        <span th:text="${tokens.size()}"></span>
+      </div>
+      <div class="token-info">
+        <span>Total Amount:</span>
+        <span th:text="${'৳' + totalAmount}"></span>
+      </div>
+      <div class="token-info">
+        <span>Payment Method:</span>
+        <span th:text="${paymentMethod}"></span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

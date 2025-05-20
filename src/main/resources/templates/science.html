@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="bn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিজ্ঞান ইউনিট - MyMBSTU</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #004080;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #004080;
+            color: white;
+        }
+        .download-btn, .view-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .download-btn {
+            background: #004080;
+        }
+        .download-btn:hover {
+            background: #003366;
+        }
+        .view-btn {
+            background: #008000;
+            margin-right: 10px;
+        }
+        .view-btn:hover {
+            background: #006400;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>বিজ্ঞান ইউনিট</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>কার্যক্রম</th>
+            <th>তারিখ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>কার্যক্রম ১০, গণিত কর্মশালা</td>
+            <td>01-JAN-25</td>
+        </tr>
+        <tr>
+            <td>প্রতিবেদন জমা</td>
+            <td>10-JAN-25</td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- View PDF in New Tab -->
+    <a th:href="@{/view/science.pdf}" target="_blank" class="view-btn">PDF দেখুন</a>
+    <!-- Direct Download -->
+    <a th:href="@{/download/science.pdf}" class="download-btn">PDF ডাউনলোড করুন</a>
+</div>
+</body>
+</html>

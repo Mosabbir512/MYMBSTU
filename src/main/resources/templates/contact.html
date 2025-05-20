@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - MYMBSTU</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      color: #1a5276;
+      background-color: #ffffff;
+      padding-top: 70px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60vh;
+      background: linear-gradient(rgba(224, 255, 255, 0.1), rgba(224, 255, 255, 0.1)),
+      url('/baro.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
+
+    /* Navigation Bar Styles */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #148F77;
+      text-decoration: none;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: #1a5276;
+      font-weight: 500;
+      transition: color 0.3s;
+      padding: 0.5rem 0;
+    }
+
+    .nav-link:hover {
+      color: #E74C3C;
+    }
+
+    /* Dropdown Styles */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      min-width: 220px;
+      z-index: 1001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover .dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dropdown-item {
+      padding: 0.8rem 1.5rem;
+      color: #1a5276;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      font-size: 0.9rem;
+      border-left: 3px solid transparent;
+    }
+
+    .dropdown-item:hover {
+      background: #E8F8F5;
+      border-left-color: #76D7C4;
+    }
+
+    /* Smooth Scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Contact Page Styles */
+    .contact-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 2px solid #76D7C4;
+      scroll-margin-top: 70px; /* Add this line to account for the fixed navbar height */
+    }
+
+    .contact-section h2 {
+      color: #148F77;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .contact-section p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #1a5276;
+    }
+
+    .developer-card {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .developer-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #76D7C4;
+    }
+
+    .developer-info {
+      flex: 1;
+    }
+
+    .developer-info h3 {
+      color: #148F77;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .developer-info p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #1a5276;
+    }
+
+    .feedback-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feedback-form label {
+      font-weight: 500;
+      color: #1a5276;
+    }
+
+    .feedback-form input,
+    .feedback-form textarea {
+      padding: 0.8rem;
+      border: 1px solid #76D7C4;
+      border-radius: 5px;
+      font-size: 1rem;
+      color: #1a5276;
+    }
+
+    .feedback-form textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    .feedback-form button {
+      padding: 0.8rem 1.5rem;
+      background-color: #148F77;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .feedback-form button:hover {
+      background-color: #0E6B5B;
+    }
+
+    footer {
+      position: relative;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a5276;
+      border-top: 2px solid #76D7C4;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 1rem;
+    }
+
+    .supervisor-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #76D7C4;
+    }
+
+    .supervisor-message {
+      flex: 1;
+      text-align: left;
+    }
+
+    .supervisor-message h3 {
+      color: #148F77;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .supervisor-message p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #1a5276;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #76D7C4;
+    }
+
+    @media (max-width: 768px) {
+      .developer-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .developer-photo {
+        width: 120px;
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <a href="/home" class="navbar-brand">MYMBSTU</a>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a href="/about" class="nav-link">About ▼</a>
+      <div class="dropdown-content">
+        <a href="/about/mawlana" class="dropdown-item">About Mawlana Bhashani</a>
+        <a href="/about/achievements" class="dropdown-item">Achievements</a>
+        <a href="/about/news" class="dropdown-item">News & Updates</a>
+        <a href="/about/events" class="dropdown-item">University Events</a>
+        <a href="/about/facts" class="dropdown-item">Facts & Statistics</a>
+        <a href="/about/location" class="dropdown-item">Location & Directions</a>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a href="/notices" class="nav-link">Notices ▼</a>
+      <div class="dropdown-content">
+        <a href="/notices/academic" class="dropdown-item">Academic Notices</a>
+        <a href="/notices/administration" class="dropdown-item">Administration Notices</a>
+        <a href="/notices/events" class="dropdown-item">Event Notices</a>
+        <a href="/notices/results" class="dropdown-item">Exam Results</a>
+        <a href="/notices/tenders" class="dropdown-item">Tenders</a>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a href="/contact" class="nav-link">Contact ▼</a>
+      <div class="dropdown-content">
+        <a href="/contact/aboutDevelopers" class="dropdown-item">About Developers</a>
+        <a href="/contact/feedback" class="dropdown-item">Feedback Form</a>
+      </div>
+    </li>
+
+    <!-- Conditional Rendering for User Info -->
+    <li class="nav-item user-info" th:if="${user != null}">
+      <span style="color: black;">Welcome, <strong th:text="${user.id}"></strong></span>
+      <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+    </li>
+    <li class="nav-item" th:if="${user == null}">
+      <a href="/login" class="nav-link">Login</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- Contact Page Content -->
+<div class="contact-container">
+  <!-- About Developers Section -->
+  <div id="about-developers" class="contact-section">
+    <h2>About Developers</h2>
+    <p>
+      Meet the talented team behind MYMBSTU. Our developers are passionate about creating innovative solutions to enhance your experience.
+    </p>
+
+    <div class="developer-card">
+      <img src="/developer1.jpg" alt="Developer 1" class="developer-photo">
+      <div class="developer-info">
+        <h3>John Doe</h3>
+        <p>Lead Developer</p>
+        <p>John is responsible for the overall architecture and development of the platform.</p>
+      </div>
+    </div>
+
+    <div class="developer-card">
+      <img src="/developer2.jpg" alt="Developer 2" class="developer-photo">
+      <div class="developer-info">
+        <h3>Jane Smith</h3>
+        <p>Frontend Developer</p>
+        <p>Jane focuses on creating a seamless and user-friendly interface.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Form Section -->
+  <div id="feedback-form" class="contact-section">
+    <h2>Feedback Form</h2>
+    <form class="feedback-form" action="/submit-feedback" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <img src="/shahinsir.png" alt="Supervisor" class="supervisor-photo">
+    <div class="supervisor-message">
+      <h3>Message from the Supervisor</h3>
+      <p>At MBSTU, we ignite the flame of knowledge, guiding students through the realms of science and technology. Rooted in the legacy of Mawlana Abdul Hamid Khan Bhashani, we champion justice, education, and empowerment. Our mission is to mold future leaders who are not only adept in their fields but also committed to societal betterment. Through innovation and academic excellence, we pave the way for a brighter tomorrow</p>
+    </div>
+  </div>
+  <div class="copyright">
+    <p>© 2025 MYMBSTU. Serving the academic community since 1999</p>
+  </div>
+</footer>
+
+<script>
+  function confirmLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+      window.location.href = '/logout';
+    }
+  }
+
+  // Function to scroll to a specific section on page load
+  function scrollToSection() {
+    const hash = window.location.hash;
+    if (hash) {
+      const section = document.querySelector(hash);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+
+  // Scroll to the section when the page loads
+  window.onload = scrollToSection;
+</script>
+</body>
+</html>

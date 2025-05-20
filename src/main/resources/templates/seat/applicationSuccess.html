@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Status</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/baro.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .message-container {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      padding: 3rem;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .success h1 {
+      color: #28a745;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .error h1 {
+      color: #dc3545;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .message-container p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .message-container .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .success button {
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(135deg, #28a745, #218838);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .error button {
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .success button:hover {
+      background: linear-gradient(135deg, #218838, #1e7e34);
+    }
+    .error button:hover {
+      background: linear-gradient(135deg, #c82333, #bd2130);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Success Message -->
+<div th:if="${successMessage != null}" class="message-container success">
+  <h1>Application Successful!</h1>
+  <p th:text="${successMessage}">Your application was processed successfully.</p>
+  <div class="buttons">
+    <button onclick="window.location.href='/about_hall_man'">Home</button>
+    <button onclick="window.location.href='/logout'">Logout</button>
+  </div>
+</div>
+
+<!-- Error Message -->
+<div th:if="${errorMessage != null}" class="message-container error">
+  <h1>Application Error!</h1>
+  <p th:text="${errorMessage}">There was an error processing your application.</p>
+  <div class="buttons">
+    <button onclick="window.location.href='/about_hall_man'">Home</button>
+    <button onclick="window.location.href='/logout'">Logout</button>
+  </div>
+</div>
+
+</body>
+</html>

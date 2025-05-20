@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admission Applications Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Navbar styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2c3e50;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-menu li {
+      white-space: nowrap;
+    }
+
+    .nav-menu li a, .nav-menu li button {
+      text-decoration: none;
+      color: #2c3e50;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: inline-block;
+      font-size: 0.95rem;
+    }
+
+    .nav-menu li a:hover, .nav-menu li button:hover {
+      background: rgba(0,206,209,0.1);
+      color: #00CED1;
+    }
+
+    /* Main Content */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      padding-top: 70px;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .status-badge {
+      font-size: 0.8rem;
+      padding: 0.35em 0.65em;
+    }
+
+    .table-responsive {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .table thead th {
+      background-color: #2c3e50;
+      color: white;
+      vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 206, 209, 0.1);
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .photo-modal-img {
+      max-height: 70vh;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #2c3e50;
+      border-color: #2c3e50;
+    }
+
+    .pagination .page-link {
+      color: #2c3e50;
+    }
+
+    .app-username {
+      font-family: monospace;
+      background-color: #f8f9fa;
+      padding: 2px 5px;
+      border-radius: 3px;
+      border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/home" class="nav-brand">MYMBSTU</a>
+  <ul class="nav-menu">
+    <li><a href="/home">Home</a></li>
+    <li><a href="/admission">Admission</a></li>
+    <li><a href="/admission/notice">Notice</a></li>
+    <li><a href="/admission/applyAdmission">Apply</a></li>
+    <!-- For Provost -->
+    <li th:if="${user != null && user.role == 'ADMIN'}"><a href="/admission/provost1/noticegen">Notice Gen</a></li>
+    <li th:if="${user != null && user.role == 'ADMIN'}"><a href="/admission/management">Management</a></li>
+    <li th:if="${user != null && user.role == 'ADMIN'}"><a href="/admission/management/payment">Payment</a></li>
+
+    <!-- Login/Logout -->
+    <li th:if="${user == null}">
+      <a href="/login">Login</a>
+    </li>
+    <li th:if="${user != null}">
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-link">
+          Logout
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Admission Applications Management</h2>
+    <div th:if="${user != null}" class="text-end">
+      <small class="text-muted">Logged in as: <span th:text="${user.username}"></span></small>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="btn-group" role="group">
+          <a th:href="@{/admission/management}" class="btn btn-outline-primary" th:classappend="${viewType == 'pending'} ? 'active'">
+            <i class="fas fa-clock me-1"></i> Pending
+          </a>
+          <a th:href="@{/admission/management/approved}" class="btn btn-outline-success" th:classappend="${viewType == 'approved'} ? 'active'">
+            <i class="fas fa-check-circle me-1"></i> Approved
+          </a>
+          <a th:href="@{/admission/management/canceled}" class="btn btn-outline-danger" th:classappend="${viewType == 'canceled'} ? 'active'">
+            <i class="fas fa-times-circle me-1"></i> Canceled
+          </a>
+        </div>
+
+        <div class="export-buttons">
+          <a th:href="@{/admission/management/export/all-pdf}" class="btn btn-primary" th:if="${viewType == 'pending'}">
+            <i class="fas fa-file-pdf me-1"></i> Export All PDF
+          </a>
+          <a th:href="@{/admission/management/export/approved-pdf}" class="btn btn-success" th:if="${viewType == 'approved'}">
+            <i class="fas fa-file-pdf me-1"></i> Export Approved PDF
+          </a>
+          <a th:href="@{/admission/management/export/canceled-pdf}" class="btn btn-danger" th:if="${viewType == 'canceled'}">
+            <i class="fas fa-file-pdf me-1"></i> Export Canceled PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Applicant</th>
+        <th>Contact</th>
+        <th>Education</th>
+        <th>Credentials</th>
+        <th>Status</th>
+        <th th:if="${viewType == 'pending'}">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="app : ${applications.content}">
+        <td th:text="${app.id}"></td>
+
+        <td>
+          <strong th:text="${app.applicantName}"></strong><br>
+          <small class="text-muted" th:text="${app.fatherGuardian}"></small>
+        </td>
+
+        <td>
+          <span th:text="${app.phone}"></span><br>
+          <small th:text="${app.presentAddress}" class="text-muted"></small>
+        </td>
+
+        <td>
+          <span class="badge bg-light text-dark">SSC: <span th:text="${app.sscResult}"></span></span><br>
+          <span class="badge bg-light text-dark">HSC: <span th:text="${app.hscResult}"></span></span>
+        </td>
+
+        <td>
+          <span class="app-username" th:text="${app.appUser} ?: 'Not generated'"></span><br>
+          <small class="text-muted" th:text="${app.appPass} ?: ''"></small>
+        </td>
+
+        <td>
+          <span th:class="${app.status == 'PENDING'} ? 'badge bg-warning status-badge' :
+                          (${app.status == 'APPROVED'} ? 'badge bg-success status-badge' : 'badge bg-danger status-badge')"
+                th:text="${app.status}"></span><br>
+          <small class="text-muted" th:text="${#dates.format(app.submissionDate, 'dd MMM yyyy')}"></small>
+        </td>
+
+        <td th:if="${viewType == 'pending'}">
+          <div class="action-buttons">
+            <!--            <button class="btn btn-info btn-sm view-photos"-->
+            <!--                    data-bs-toggle="modal"-->
+            <!--                    data-bs-target="#photoModal"-->
+            <!--                    data-app-id="${app.id}"-->
+            <!--                    data-app-name="${app.applicantName}"-->
+            <!--                    data-passport-photo="${app.photoPath}"-->
+            <!--                    data-payment-photo="${app.paymentPhotoPath}">-->
+            <!--              <i class="fas fa-images"></i>-->
+            <!--            </button>-->
+
+            <form th:action="@{/admission/management/approve/{id}(id=${app.id})}" method="post">
+              <button type="submit" class="btn btn-success btn-sm">
+                <i class="fas fa-check"></i>
+              </button>
+            </form>
+
+            <form th:action="@{/admission/management/cancel/{id}(id=${app.id})}" method="post">
+              <button type="submit" class="btn btn-danger btn-sm">
+                <i class="fas fa-times"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <nav th:if="${applications.totalPages > 1}">
+    <ul class="pagination justify-content-center">
+      <!-- First Page Link -->
+      <li class="page-item" th:classappend="${applications.first} ? 'disabled' : ''">
+        <a class="page-link"
+           th:with="baseUrl=${viewType != 'pending'} ?
+                 '/admission/management/' + ${viewType} :
+                 '/admission/management'"
+           th:href="@{${baseUrl}(page=0,size=${applications.size})}">
+          <i class="fas fa-angle-double-left"></i>
+        </a>
+      </li>
+
+      <!-- Previous Page Link -->
+      <li class="page-item" th:classappend="${applications.first} ? 'disabled' : ''">
+        <a class="page-link"
+           th:with="baseUrl=${viewType != 'pending'} ?
+                 '/admission/management/' + ${viewType} :
+                 '/admission/management'"
+           th:href="@{${baseUrl}(page=${applications.number+(-1)},size=${applications.size})}">
+          <i class="fas fa-angle-left"></i>
+        </a>
+      </li>
+
+      <!-- Page Number Links -->
+      <li class="page-item" th:each="i : ${#numbers.sequence(
+          Math.max(0, applications.number+(-2)),
+          Math.min(applications.totalPages+(-1), applications.number+2))}"
+          th:classappend="${i == applications.number} ? 'active' : ''">
+        <a class="page-link"
+           th:with="baseUrl=${viewType != 'pending'} ?
+                 '/admission/management/' + ${viewType} :
+                 '/admission/management'"
+           th:href="@{${baseUrl}(page=${i},size=${applications.size})}"
+           th:text="${i+1}"></a>
+      </li>
+
+      <!-- Next Page Link -->
+      <li class="page-item" th:classappend="${applications.last} ? 'disabled' : ''">
+        <a class="page-link"
+           th:with="baseUrl=${viewType != 'pending'} ?
+                 '/admission/management/' + ${viewType} :
+                 '/admission/management'"
+           th:href="@{${baseUrl}(page=${applications.number+1},size=${applications.size})}">
+          <i class="fas fa-angle-right"></i>
+        </a>
+      </li>
+
+      <!-- Last Page Link -->
+      <li class="page-item" th:classappend="${applications.last} ? 'disabled' : ''">
+        <a class="page-link"
+           th:with="baseUrl=${viewType != 'pending'} ?
+                 '/admission/management/' + ${viewType} :
+                 '/admission/management'"
+           th:href="@{${baseUrl}(page=${applications.totalPages+(-1)},size=${applications.size})}">
+          <i class="fas fa-angle-double-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="text-center text-muted mt-2">
+    <span th:text="'Showing ' + (${applications.number * applications.size + 1}) +
+                  ' to ' + (${(applications.number * applications.size) + applications.numberOfElements}) +
+                  ' of ' + ${applications.totalElements} + ' entries'"></span>
+  </div>
+</div>
+
+<!-- Photo View Modal -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Application Details - <span id="modalAppName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="photoTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="passport-tab" data-bs-toggle="tab" data-bs-target="#passport" type="button" role="tab">
+              Passport Photo
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab">
+              Payment Receipt
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content p-3 border border-top-0 rounded-bottom">
+          <div class="tab-pane fade show active" id="passport" role="tabpanel">
+            <div class="text-center">
+              <img id="passportPhoto" src="" class="photo-modal-img" alt="Passport Photo">
+              <div id="passportMissing" class="d-none">
+                <i class="fas fa-user-slash fa-5x text-muted mb-3"></i>
+                <p class="text-muted">Passport photo not available</p>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="payment" role="tabpanel">
+            <div class="text-center">
+              <img id="paymentPhoto" src="" class="photo-modal-img" alt="Payment Receipt">
+              <div id="paymentMissing" class="d-none">
+                <i class="fas fa-receipt fa-5x text-muted mb-3"></i>
+                <p class="text-muted">Payment receipt not available</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const photoModal = document.getElementById('photoModal');
+    if (photoModal) {
+      photoModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const appName = button.getAttribute('data-app-name');
+        const passportPhoto = button.getAttribute('data-passport-photo');
+        const paymentPhoto = button.getAttribute('data-payment-photo');
+
+        // Set application name
+        document.getElementById('modalAppName').textContent = appName;
+
+        // Handle passport photo
+        const passportImg = document.getElementById('passportPhoto');
+        const passportMissing = document.getElementById('passportMissing');
+        if (passportPhoto && passportPhoto.trim() !== '') {
+          passportImg.src = passportPhoto;
+          passportImg.classList.remove('d-none');
+          passportMissing.classList.add('d-none');
+        } else {
+          passportImg.classList.add('d-none');
+          passportMissing.classList.remove('d-none');
+        }
+
+        // Handle payment photo
+        const paymentImg = document.getElementById('paymentPhoto');
+        const paymentMissing = document.getElementById('paymentMissing');
+        if (paymentPhoto && paymentPhoto.trim() !== '') {
+          paymentImg.src = paymentPhoto;
+          paymentImg.classList.remove('d-none');
+          paymentMissing.classList.add('d-none');
+        } else {
+          paymentImg.classList.add('d-none');
+          paymentMissing.classList.remove('d-none');
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

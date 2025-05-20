@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Attestation - MYMBSTU</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/baro.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .attestation-form {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .attestation-form h1 {
+            margin-bottom: 1rem;
+            color: #007BFF;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .attestation-form p {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .attestation-form label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .attestation-form textarea {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #f9f9f9;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .attestation-form textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+        .attestation-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .attestation-form button:hover {
+            background: linear-gradient(135deg, #0056b3, #003f7f);
+        }
+    </style>
+</head>
+<body>
+
+<div class="attestation-form">
+    <h1>Apply for Attestation</h1>
+    <p><strong>Name:</strong> <span th:text="${user.username}"></span></p>
+    <p><strong>Department:</strong> <span th:text="${user.department}"></span></p>
+    <p><strong>Session:</strong> <span th:text="${seat.sessionId}"></span></p>
+    <p><strong>Hall Name:</strong> <span th:text="${user.hallName}"></span></p>
+    <form action="/applyAttestation" method="post">
+        <label for="reason">Reason for Attestation:</label>
+        <textarea id="reason" name="reason" rows="4" placeholder="Enter the reason for attestation" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>

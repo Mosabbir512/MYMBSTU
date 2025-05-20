@@ -1,0 +1,98 @@
+<style>
+    .circle {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #3498db;
+        border-radius: 50%;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0 auto;
+    }
+
+    .filled {
+        background-color: #3498db;
+    }
+
+    .application-table th,
+    .application-table td {
+        padding: 8px 10px;
+        text-align: center;
+    }
+
+    .application-actions {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .action-btn {
+        padding: 4px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .approve-btn {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .reject-btn {
+        background-color: #f44336;
+        color: white;
+    }
+</style>
+
+<table class="application-table">
+    <thead>
+    <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>Father's Income</th>
+        <th>Address</th>
+        <th>Reason</th>
+        <th>Hall Name</th>
+        <th>Applied On</th>
+        <th>Viva</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="request : ${seatRequests.content}">
+        <td th:text="${request.user.id}">2023001</td>
+        <td th:text="${request.user.username}">John Doe</td>
+        <td th:text="${request.fatherIncome}">50000</td>
+        <td th:text="${request.permanentAddress}">123 Main St</td>
+        <td th:text="${request.reason}">Need accommodation</td>
+        <td th:text="${request.user.hallName}">SRH</td>
+        <td th:text="${#temporals.format(request.createdAt, 'yyyy-MM-dd HH:mm')}">2023-06-15</td>
+
+        <!-- Viva Circle -->
+        <td>
+            <div class="circle" onclick="fillCircle(this)"></div>
+        </td>
+
+        <td class="application-actions">
+            <button class="action-btn approve-btn"
+                    th:data-id="${request.id}"
+                    onclick="approveApplication(this)">Approve
+            </button>
+            <button class="action-btn reject-btn"
+                    th:data-id="${request.id}"
+                    onclick="rejectApplication(this)">Reject
+            </button>
+        </td>
+    </tr>
+
+    <tr th:if="${seatRequests.content.size() == 0}">
+        <td colspan="9" style="text-align: center;">No pending applications found</td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    function fillCircle(element) {
+        element.classList.toggle("filled");
+    }
+</script>

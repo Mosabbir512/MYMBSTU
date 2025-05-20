@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - MYMBSTU</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      color: #1a5276;
+      background-color: #ffffff;
+      padding-top: 70px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60vh;
+      background: linear-gradient(rgba(224, 255, 255, 0.1), rgba(224, 255, 255, 0.1)),
+      url('/baro.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
+
+    /* Navigation Bar Styles */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #148F77;
+      text-decoration: none;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: #1a5276;
+      font-weight: 500;
+      transition: color 0.3s;
+      padding: 0.5rem 0;
+    }
+
+    .nav-link:hover {
+      color: #E74C3C;
+    }
+
+    /* Dropdown Styles */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      min-width: 220px;
+      z-index: 1001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover .dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dropdown-item {
+      padding: 0.8rem 1.5rem;
+      color: #1a5276;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      font-size: 0.9rem;
+      border-left: 3px solid transparent;
+    }
+
+    .dropdown-item:hover {
+      background: #E8F8F5;
+      border-left-color: #76D7C4;
+    }
+
+    /* Smooth Scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* About Page Styles */
+    .about-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 2px solid #76D7C4;
+      scroll-margin-top: 70px; /* Add this line to account for the fixed navbar height */
+    }
+
+    .about-section h2 {
+      color: #148F77;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .about-section p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #1a5276;
+    }
+
+    /* Events Section Styles */
+    .events-content {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .events-text {
+      flex: 1;
+    }
+
+    .events-image {
+      flex: 1;
+      text-align: center;
+    }
+
+    .events-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .events-content {
+        flex-direction: column;
+      }
+
+      .events-image {
+        order: -1; /* Move the image above the text on smaller screens */
+      }
+    }
+
+    /* Footer Styles */
+    footer {
+      position: relative;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a5276;
+      border-top: 2px solid #76D7C4;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 1rem;
+    }
+
+    .supervisor-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #76D7C4;
+    }
+
+    .supervisor-message {
+      flex: 1;
+      text-align: left;
+    }
+
+    .supervisor-message h3 {
+      color: #148F77;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .supervisor-message p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #1a5276;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #76D7C4;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .navbar {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+        background: rgba(255,255,255,0.8);
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .supervisor-photo {
+        width: 120px;
+        height: 120px;
+      }
+
+      .supervisor-message {
+        text-align: center;
+      }
+
+      body {
+        padding-bottom: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <a href="/home" class="navbar-brand">MYMBSTU</a>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a href="/about" class="nav-link">About ▼</a>
+      <div class="dropdown-content">
+        <a href="/about/mawlana" class="dropdown-item">About Mawlana Bhashani</a>
+        <a href="/about/achievements" class="dropdown-item">Achievements</a>
+        <a href="/about/news" class="dropdown-item">News & Updates</a>
+        <a href="/about/events" class="dropdown-item">University Events</a>
+        <a href="/about/facts" class="dropdown-item">Facts & Statistics</a>
+        <a href="/about/location" class="dropdown-item">Location & Directions</a>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a href="/notices" class="nav-link">Notices ▼</a>
+      <div class="dropdown-content">
+        <a href="/notices/academic" class="dropdown-item">Academic Notices</a>
+        <a href="/notices/administration" class="dropdown-item">Administration Notices</a>
+        <a href="/notices/events" class="dropdown-item">Event Notices</a>
+        <a href="/notices/results" class="dropdown-item">Exam Results</a>
+        <a href="/notices/tenders" class="dropdown-item">Tenders</a>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a href="/contact" class="nav-link">Contact ▼</a>
+      <div class="dropdown-content">
+        <a href="/contact/aboutDevelopers" class="dropdown-item">About Developers</a>
+        <a href="/contact/feedback" class="dropdown-item">Feedback Form</a>
+      </div>
+    </li>
+
+    <!-- Conditional Rendering for User Info -->
+    <li class="nav-item user-info" th:if="${user != null}">
+      <span style="color: black;">Welcome, <strong th:text="${user.id}"></strong></span>
+      <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+    </li>
+    <li class="nav-item" th:if="${user == null}">
+      <a href="/login" class="nav-link">Login</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- About Page Content -->
+<div class="about-container">
+  <!-- Mawlana Section -->
+  <div id="mawlana" class="about-section">
+    <h2>About Mawlana Bhashani</h2>
+    <p>
+      মজলুম জননেতা মওলানা আবদুল হামিদ খান ভাসানী (১৮৮০-১৯৭৬)-র জীবন ও কর্ম পরিচিত
+      মজলুম জননেতা মওলানা আবদুল হামিদ খান ভাসানী (জন্মস্থান: সয়াধানগড়া, সিরাজগঞ্জ, ১২ ডিসেম্বর ১৮৮০) ছিলেন আন্তর্জাতিক খ্যাতিসম্পন্ন একজন প্রভাবশালী বাঙালি রাজনৈতিক নেতা। তিনি ব্রিটিশ, পাকিস্তান ও স্বাধীন বাংলাদেশে শোষিত মানুষ বিশেষত কৃষক শ্রমিক মজুর মজদুর মানুষের পক্ষে সংগ্রাম করেছেন সারাজীবন। তাই তিনি মজলুম জননেতা নামে পরিচিত। আফ্রো-এশিয়া-ল্যাটিন আমেরিকার শোষিত মানুষের অধিকার প্রতিষ্ঠার অবিসংবাদিত নেতাও মওলানা ভাসানী। স্বদেশে সামন্তবাদ ও সামাজ্যবাদ বিরোধী সংগ্রামের সাথে সাথে স্বায়ত্তশাসন থেকে স্বাধীনতার জন্য সংগ্রামে, আসামের কুখ্যাত লাইনপ্রথা বিরোধী আন্দোলনে, পাকিস্তান আন্দোলন, বাংলা ভাষা আন্দোলন, শেষতক স্বাধীন বাংলাদেশের প্রথম স্বপ্নদ্রষ্টা তিনি। ১৯৪৯ সালে তিনি আওয়ামী মুসলিম লীগ প্রতিষ্ঠা করেন, আবার ১৯৫৭ সালে কাগমারীত সম্মেলনের পর আওয়ামী লীগ থেকে বের হয়ে ন্যাশনাল আওয়ামী পার্টি (ন্যাপ) গঠন করেন। এছাড়াও বহুসংখ্যক অরাজনৈতিক দাতব্য প্রতিষ্ঠান প্রতিষ্ঠা করেছেন। এর মধ্যে উল্লেখযোগ্য হলো: হক্কুল এবাদ মিশন, হুকুমতে রব্বানিয়া সমিতি, সন্তোষ ইসলামী বিশ্ববিদ্যালয়, খোদায়ী খেদমতগার প্রণিধানযোগ্য। ইসলামভিত্তিক সমাজতান্ত্রিক আদর্শ প্রচারে তাঁর অবদান অনস্বীকার্য। সারাজীবন নিরহংকার জীবনযাপনকারী এই নেতা ১৯৭৬ সালের ১৭ নভেম্বর মৃত্যুবরণ করেন। তিনি সমাহিত আছেন সন্তোষ, টাঙ্গাইলে। শতাব্দীর পর শতাব্দী, জেগে থাকুক ভাসানী।    </p>
+  </div>
+
+  <!-- Achievements Section -->
+  <div id="achievements" class="about-section">
+    <h2>Achievements</h2>
+    <p>
+      Mawlana Bhashani Science and Technology University has achieved numerous milestones in the fields of education, research, and community service. Our students and faculty continue to excel in various disciplines.
+    </p>
+  </div>
+
+  <!-- News Section -->
+  <div id="news" class="about-section">
+    <h2>News & Updates</h2>
+    <p>
+      Stay updated with the latest news and events at MBSTU. From academic achievements to campus developments, we keep you informed about everything happening at our university.
+    </p>
+  </div>
+
+  <!-- Events Section -->
+  <div id="events" class="about-section">
+    <h2>University Events</h2>
+    <div class="events-content">
+      <div class="events-text">
+        <p>
+          মাওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়ে ইনস্টিটিউশনাল কোয়ালিটি অ্যাস্যুরেন্স সেল (আইকিউএসি) এর উদ্যোগে দিনব্যাপী “টিম বিল্ডিং ফর সেল্ফ অ্যাসেসমেন্ট প্রোগ্রাম” শীর্ষক কর্মশালা ৩০ জুলাই ২০২৩ তারিখে বিশ্ববিদ্যালয়ের বায়োটেকনোলজি এন্ড জেনেটিক ইঞ্জিনিয়ারিং বিভাগের সম্মেলন কক্ষে অনুষ্ঠিত হয়েছে। কর্মশালায় প্রধান অতিথি হিসেবে বক্তব্য রাখেন ও উদ্বোধন করেন মাননীয় ভাইস-চ্যান্সেলর প্রফেসর ড. মোঃ ফরহাদ হোসেন। বিশেষ অতিথি হিসেবে বক্তব্য রাখেন বিশ্ববিদ্যালয়ের মাননীয় প্রো-ভাইস চ্যান্সেলর প্রফেসর ড. এ আর এম সোলাইমান ও মাননীয় ট্রেজারার প্রফেসর ড. মোঃ সিরাজুল ইসলাম। অনুষ্ঠানের সভাপতিত্ব করেন আইকিউএসি এর পরিচালক প্রফেসর ড. মোঃ উমর ফারুক ও সঞ্চালনা করেন আইকিউএসি এর অতিরিক্ত পরিচালক প্রফেসর ড. এ কে ওবায়দুল হক।
+        </p>
+      </div>
+      <div class="events-image">
+        <img src="/events-image.jpg" alt="University Event">
+      </div>
+    </div>
+  </div>
+
+  <!-- Facts Section -->
+  <div id="facts" class="about-section">
+    <h2>Facts & Statistics</h2>
+    <p>
+      MBSTU is home to over 4,000 students and 350 faculty members. We offer a wide range of programs across seven faculties and 19 departments, ensuring a diverse and enriching academic experience.
+    </p>
+  </div>
+
+  <!-- Location Section -->
+  <div id="location" class="about-section">
+    <h2>Location & Directions</h2>
+    <p>
+      MBSTU is located in Tangail, Bangladesh. Our campus is easily accessible by road and is well-connected to major cities in the country. Visit us to experience the vibrant academic environment at MBSTU.
+    </p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <img src="/shahinsir.png" alt="Supervisor" class="supervisor-photo">
+    <div class="supervisor-message">
+      <h3>Message from the Supervisor</h3>
+      <p>At MBSTU, we ignite the flame of knowledge, guiding students through the realms of science and technology. Rooted in the legacy of Mawlana Abdul Hamid Khan Bhashani, we champion justice, education, and empowerment. Our mission is to mold future leaders who are not only adept in their fields but also committed to societal betterment. Through innovation and academic excellence, we pave the way for a brighter tomorrow</p>
+    </div>
+  </div>
+  <div class="copyright">
+    <p>© 2025 MYMBSTU. Serving the academic community since 1999</p>
+  </div>
+</footer>
+
+<script>
+  function confirmLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+      window.location.href = '/logout';
+    }
+  }
+
+  // Function to scroll to a specific section
+  function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  // Function to extract the section identifier from the URL
+  function getSectionFromUrl() {
+    const path = window.location.pathname; // e.g., "/about/events"
+    const parts = path.split('/'); // e.g., ["", "about", "events"]
+    return parts[2]; // e.g., "events"
+  }
+
+  // On page load, scroll to the section specified in the URL
+  window.onload = function () {
+    const sectionId = getSectionFromUrl();
+    if (sectionId) {
+      scrollToSection(sectionId);
+    }
+  };
+</script>
+</body>
+</html>

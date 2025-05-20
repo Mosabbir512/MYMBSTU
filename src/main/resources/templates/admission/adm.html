@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyMBSTU - Important Dates</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2c3e50;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-menu li {
+      white-space: nowrap;
+    }
+
+    .nav-menu li a, .nav-menu li button {
+      text-decoration: none;
+      color: #2c3e50;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      display: inline-block;
+      font-size: 0.95rem;
+    }
+
+    .nav-menu li a:hover, .nav-menu li button:hover {
+      background: rgba(0,206,209,0.1);
+      color: #00CED1;
+    }
+
+    .welcome-text {
+      padding: 0.5rem 1rem;
+      color: #2c3e50;
+      font-size: 0.95rem;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #2c3e50;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    /* Main Layout */
+    .container {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 80px;
+      flex-direction: column;
+    }
+
+    /* Sidebar and Content Wrapper */
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #004080;
+      color: white;
+      padding: 20px;
+      position: fixed;
+      height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-menu li {
+      padding: 12px 0;
+    }
+
+    .sidebar-menu li a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-menu li a:hover {
+      color: #00CED1;
+      padding-left: 5px;
+    }
+
+    .dropdown-content {
+      display: none;
+      padding-left: 15px;
+      list-style: none;
+    }
+
+    .dropdown-content li a {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      padding: 30px;
+      margin-left: 250px;
+      background: white;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* Steps */
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .step {
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .step:hover {
+      transform: translateY(-5px);
+    }
+
+    .step h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .step ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .step ul li {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .step ul li:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-1 { background: #d9534f; }
+    .step-2 { background: #f0ad4e; }
+    .step-3 { background: #5bc0de; }
+    .step-4 { background: #5cb85c; }
+    .step-5 { background: #0275d8; }
+
+    /* Table */
+    h2 {
+      color: #004080;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #004080;
+      color: white;
+      font-weight: 500;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 200px;
+      }
+      .content {
+        margin-left: 200px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .nav-menu {
+        margin-top: 10px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .main-wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .content {
+        margin-left: 0;
+      }
+
+      .steps-container {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 576px) {
+      .nav-menu {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+      }
+
+      .nav-menu li {
+        text-align: center;
+      }
+
+      th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/home" class="nav-brand">MYMBSTU</a>
+  <ul class="nav-menu">
+    <li><a href="/home">Home</a></li>
+    <li><a href="/admission">Admission</a></li>
+
+    <li><a href="/admission/notice">Notice</a></li>
+    <li><a href="/admission/applyAdmission">Apply</a> </li>
+    <!-- In your navbar section -->
+<!--    <li th:if="${showPaymentOption || (user!=null && (user.role=='STUDENT' || user.role=='APPLICANT'))}"><a href="/admission/payment">Payment</a></li>-->
+
+    <!-- For Provost -->
+    <li th:if="${user!=null && ( user.username=='admin' || user.username == 'staf' )}">
+      <a href="/admission/provost1/noticegen">Notice Gen</a>
+    </li>
+    <li  th:if="${user !=null && (user.username=='staf' || user.username=='admin')}">
+      <a href="/admission/management">Management</a>
+      <div class="dropdown-content">
+        <a href="/admission/management">Applicant</a>
+        <a href="/admission/management/approve">Approve List</a>
+        <a href="/admission/management/cancel">Cancel List</a>
+        <a href="/admission/management/confirm">Confirm List</a>
+      </div>
+    </li>
+
+    <!-- Conditional Rendering for User Info -->
+    <li class="nav-item user-info" th:if="${user != null}">
+      <span style="color: black;">Welcome, <strong th:text="${user.id}"></strong></span>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </li>
+    <li class="nav-item" th:if="${user == null}">
+      <a href="/loginApp" class="nav-link">Login</a>
+    </li>
+
+<!--    <li th:if="${user != null && user.role == 'PROVOST'}"><a href="/admission/provost1/noticegen">Notice Gen</a></li>-->
+<!--    <li th:if="${user != null && user.role == 'PROVOST'}"><a href="/admission/management">Management</a></li>-->
+
+
+
+
+  </ul>
+</nav>
+
+<!-- Main Container -->
+<div class="container">
+  <div class="main-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="logo.png" alt="University Logo" style="max-width: 100%;">
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="#" onclick="toggleDropdown('notices'); return false;">
+            <i class="material-icons">notifications</i>
+            Notices
+          </a>
+          <ul id="notices" class="dropdown-content">
+            <li><a href="/science">Science Unit</a></li>
+            <li><a href="#" onclick="openFacultyPage('arts')">Arts Faculty</a></li>
+            <li><a href="#" onclick="openFacultyPage('commerce')">Commerce Faculty</a></li>
+            <li><a href="#" onclick="openFacultyPage('engineering')">Engineering Faculty</a></li>
+            <li><a href="#" onclick="openFacultyPage('law')">Law Faculty</a></li>
+            <li><a href="#" onclick="openFacultyPage('social-science')">Social Science Faculty</a></li>
+          </ul>
+        </li>
+        <li><a href="/about">University Information</a></li>
+<!--        <li><a href="#">Apply for Admission</a></li>-->
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Application Steps -->
+      <div class="steps-container">
+        <div class="step step-1">
+          <h3>01 Information</h3>
+          <ul>
+            <li>Higher Secondary: Roll,Board</li>
+            <li>Secondary: Roll</li>
+          </ul>
+        </div>
+        <div class="step step-2">
+          <h3>02 Details</h3>
+          <ul>
+            <li>Select first and second language</li>
+            <li>Current address</li>
+            <li>Mobile number, Email</li>
+            <li>Parents' information</li>
+            <li>Quota (if applicable)</li>
+          </ul>
+        </div>
+        <div class="step step-3">
+          <h3>03 Photo</h3>
+          <ul>
+            <li>Width 480-630 pixels</li>
+            <li>Height 600-830 pixels</li>
+            <li>Type: .jpg or .jpeg</li>
+          </ul>
+        </div>
+        <div class="step step-4">
+          <h3>04 Password</h3>
+          <ul>
+            <li>Password via SMS</li>
+          </ul>
+        </div>
+        <div class="step step-5">
+          <h3>05 Fee Payment</h3>
+          <ul>
+            <li>Mobile Banking</li>
+            <li>Debit/Credit Card</li>
+            <li>Sonali, Agrani, Janata, Rupali Bank</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Important Dates -->
+      <h2>Important Dates</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>Unit</th>
+          <th>Subject</th>
+          <th>Date & Time</th>
+          <th>Event Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Science Unit</td>
+          <td>Application & Fee Payment</td>
+          <td>4 November 2024 12:00 PM - 27 November 2024 11:59 PM</td>
+          <td>Time has ended</td>
+        </tr>
+        <tr>
+          <td>Science Unit</td>
+          <td>Exam Time</td>
+          <td>15 February 2025 11:00 AM - 15 February 2025 12:30 PM</td>
+          <td>Time has ended</td>
+        </tr>
+        <tr>
+          <td>Arts, Law & Social Science Unit</td>
+          <td>Exam Time</td>
+          <td>25 January 2025 11:00 AM - 25 January 2025 12:30 PM</td>
+          <td>Time has ended</td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+
+<script>
+  function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function openFacultyPage(faculty) {
+    const pages = {
+      'science': 'science.html',
+      'arts': 'arts.html',
+      'commerce': 'commerce.html',
+      'engineering': 'engineering.html',
+      'law': 'law.html',
+      'social-science': 'social-science.html'
+    };
+    window.open(pages[faculty], '_blank');
+    return false;
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.matches('.sidebar-menu li a')) {
+      const dropdowns = document.querySelectorAll('.dropdown-content');
+      dropdowns.forEach(dropdown => {
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

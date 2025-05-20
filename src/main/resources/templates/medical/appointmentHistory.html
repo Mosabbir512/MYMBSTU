@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Appointment History</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .history-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+    .action-buttons {
+      margin-top: 20px;
+      border-top: 1px solid #dee2e6;
+      padding-top: 15px;
+    }
+    body {
+      background: linear-gradient(#E0FFFF, #E0FFFF, #E0FFFF 100%);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body class="bg-light">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand clickable" href="/medical">
+      <img src="/logo.png" alt="MBSTU Logo" height="40">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link clickable" href="/view-responses">Appointment History</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link clickable active" href="/medical">Home</a>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="nav-link clickable" href="/logout">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link clickable" href="/medical">Go back</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 pt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <div>
+        <h4>Your Medical History</h4>
+        <p class="mb-0">All your appointments and doctor responses</p>
+      </div>
+
+    </div>
+
+    <div class="card-body">
+      <div th:each="appointment : ${appointments}" class="history-card">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Appointment ID No : <span th:text="${appointment.id}"></span></h5>
+            <p><strong>Doctor:</strong> <span th:text="${appointment.doctorName}"></span></p>
+            <p><strong>Problem:</strong> <span th:text="${appointment.problem}"></span></p>
+            <p><strong>Date:</strong>
+              <span th:text="${#temporals.format(appointment.appointmentDate, 'dd MMM yyyy')}"></span>
+            </p>
+          </div>
+          <div class="col-md-6">
+            <div th:if="${appointment.response}" class="alert alert-success">
+              <h6>Doctor's Response:</h6>
+              <p th:text="${appointment.response}"
+                 style="white-space: pre-wrap;"></p>
+            </div>
+            <div th:unless="${appointment.response}" class="alert alert-info">
+              Response pending
+            </div>
+          </div>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-outline-primary"
+                  data-bs-toggle="collapse"
+                  th:attr="data-bs-target='#details-'+${appointment.id}">
+            View Details
+          </button>
+          <div class="collapse mt-2" th:attr="id='details-'+${appointment.id}">
+            <div class="card card-body">
+              <p><strong>Detailed Description:</strong></p>
+              <p th:text="${appointment.problemDetails}"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div th:if="${#lists.isEmpty(appointments)}" class="alert alert-info">
+        No appointment history found.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

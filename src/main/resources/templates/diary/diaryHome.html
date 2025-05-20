@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diary - MBSTU</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #ecf0f1;
+      overflow-x: hidden;
+    }
+
+    .main {
+      padding-top: 70px;
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(#E0FFFF, #E0FFFF, #E0FFFF 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .navbar {
+      position: fixed;
+      width: 100%;
+      height: 70px;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 50px;
+      top: 0;
+      z-index: 1000;
+      background: #E0FFFF;
+    }
+
+    .icon .logo a {
+      text-decoration: none;
+      color: black;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .menu ul {
+      list-style: none;
+      display: flex;
+    }
+
+    .menu ul li {
+      margin: 0 15px;
+    }
+
+    .menu ul li a {
+      text-decoration: none;
+      color: black;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .menu ul li a:hover {
+      color: #e67e22;
+    }
+
+    .search-container {
+      text-align: center;
+      max-width: 800px;
+      width: 90%;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .search-container h1 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+
+    .search-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .srch {
+      width: 300px;
+      height: 45px;
+      border: 2px solid cyan;
+      background: white;
+      color: black;
+      padding: 0 15px;
+      font-size: 16px;
+      border-radius: 5px 0 0 5px;
+      outline: none;
+    }
+
+    .btn {
+      width: 100px;
+      height: 45px;
+      background: cyan;
+      border: none;
+      color: #2c3e50;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #cf711f;
+    }
+
+    #searchResults {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto 0;
+      background: #ffffff;
+      border-radius: 5px;
+      display: none;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .result-item {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      color: #2c3e50;
+      font-size: 14px;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+<div class="navbar">
+  <div class="icon">
+    <h2 class="logo"><a href="/diary">MBSTU Diary</a></h2>
+  </div>
+  <div class="menu">
+    <ul>
+      <li><a href="/home">HOME</a></li>
+      <li><a href="/about">ABOUT</a></li>
+      <li><a href="/contact">CONTACT</a></li>
+      <li><a href="/diary">SEARCH</a></li>
+      <th:block th:if="${isAdmin}">
+        <li><a href="/add-info">ADD INFO</a></li>
+        <li><a href="/delete-info">DELETE INFO</a></li>
+      </th:block>
+      <li th:if="${isLoggedIn}"><a href="/logout" onclick="logoutUser(event)">LOGOUT</a></li>
+      <li th:if="${!isLoggedIn}"><a href="/login">LOGIN</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="main">
+  <div class="search-container">
+    <h1>Find your desired person of<br> Mawlana Bhashani Science and Technology University</h1>
+    <div class="search-box">
+      <input class="srch" type="text" id="searchInput" placeholder="Search here" onkeyup="liveSearch()">
+      <button class="btn" onclick="searchPerson()">Search</button>
+    </div>
+    <div id="searchResults"></div>
+  </div>
+</div>
+
+<script>
+  function liveSearch() {
+    let query = document.getElementById("searchInput").value.trim();
+    let resultDiv = document.getElementById("searchResults");
+
+    if (query === "") {
+      resultDiv.style.display = "none";
+      resultDiv.innerHTML = "";
+      return;
+    }
+
+    fetch("/api/search?query=" + encodeURIComponent(query))
+            .then(response => {
+              if (response.status === 401) {
+                alert("You must log in to search.");
+                window.location.href = "/login";  // Redirect to login page
+                return Promise.reject("Unauthorized");
+              }
+              return response.json();
+            })
+            .then(data => {
+              resultDiv.innerHTML = "";
+              if (data.length > 0) {
+                resultDiv.style.display = "block";
+                data.forEach(person => {
+                  resultDiv.innerHTML += `<div class="result-item">
+                                <strong>${person.name}</strong><br>
+                                ${person.designation}<br>
+                                📞 ${person.phone} | ✉ ${person.email}<br>
+                                Department: ${person.department}
+                            </div>`;
+                });
+              } else {
+                resultDiv.style.display = "none";
+              }
+            })
+            .catch(error => console.error("Error:", error));
+  }
+
+  function searchPerson() {
+    liveSearch();
+  }
+
+  // Clear results when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.search-container')) {
+      document.getElementById("searchResults").style.display = "none";
+    }
+  });
+
+  // Logout function
+  function logoutUser(event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin', // Ensures cookies are sent with the request
+    })
+            .then(response => {
+              if (response.status === 200) {
+                window.location.href = "/login"; // Redirect to login after successful logout
+              } else {
+                alert("Logout failed. Please try again.");
+              }
+            })
+            .catch(error => {
+              console.error("Logout error:", error);
+              alert("An error occurred while logging out.");
+            });
+  }
+</script>
+</body>
+</html>

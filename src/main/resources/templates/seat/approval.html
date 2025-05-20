@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seat Approval - MBSTU</title>
+  <style>
+    :root {
+      --primary-color: #00b2d1;
+      --secondary-color: #2c3e50;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --light-bg: #E0FFFF;
+      --white: #ffffff;
+      --gray-light: #f8f9fa;
+      --gray-border: #ddd;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(var(--light-bg), var(--light-bg), var(--light-bg));
+      min-height: 100vh;
+      color: var(--secondary-color);
+    }
+
+    .navbar {
+      width: 100%;
+      padding: 1rem 2rem;
+      background: var(--white);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--secondary-color);
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+      background: rgba(0, 206, 209, 0.1);
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: var(--white);
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+    }
+
+    .logout-btn {
+      background: var(--danger-color);
+      color: var(--white) !important;
+      padding: 0.5rem 1.5rem !important;
+      border-radius: 8px;
+      transition: background 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background: #c82333 !important;
+    }
+
+    .section {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 6rem auto 2rem;
+      background: var(--white);
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .section h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid var(--gray-border);
+      border-radius: 4px;
+    }
+
+    .search-container button,
+    .search-container .action-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-container button {
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+    }
+
+    .action-btn {
+      text-decoration: none;
+      color: var(--white);
+      background: #6c757d;
+      display: inline-block;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .application-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+
+    .application-table th,
+    .application-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-border);
+    }
+
+    .application-table th {
+      background-color: var(--gray-light);
+      font-weight: 600;
+    }
+
+    .application-table tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .application-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-success {
+      background: var(--success-color);
+      color: var(--white);
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .btn-danger {
+      background: var(--danger-color);
+      color: var(--white);
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      gap: 0.5rem;
+    }
+
+    .pagination a,
+    .pagination span {
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border: 1px solid var(--gray-border);
+      border-radius: 4px;
+    }
+
+    .pagination a:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border-color: var(--primary-color);
+    }
+
+    .pagination .active {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border-color: var(--primary-color);
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: var(--white);
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 60%;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .close {
+      color: var(--secondary-color);
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: var(--danger-color);
+    }
+
+    .room-list, .seat-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .room-item, .seat-item {
+      padding: 10px;
+      background-color: var(--gray-light);
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .room-item:hover, .seat-item:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    .seat-item.booked {
+      background-color: var(--danger-color);
+      color: var(--white);
+      cursor: not-allowed;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .section {
+        margin-top: 8rem;
+        padding: 1rem;
+      }
+
+      .application-actions {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .modal-content {
+        width: 90%;
+      }
+
+      .room-list, .seat-list {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/home" class="nav-brand">MYMBSTU</a>
+  <div class="nav-links">
+    <a href="/home">Home</a>
+
+    <!-- About Hall Link with Dropdown -->
+    <div class="dropdown">
+      <a href="/about_hall_man">About Hall</a>
+      <div class="dropdown-content">
+        <a href="/about_hall_man#about-section">About Hall</a>
+        <th:block th:unless="${user != null && (user.role == 'PROVOST' || user.role == 'STAF')}">
+          <a href="/about_hall_man#services-section">Services</a>
+        </th:block>
+        <th:block th:if="${user != null && (user.role == 'PROVOST' || user.role == 'STAF')}">
+          <a href="/about_hall_man#admin-section">Admin Dashboard</a>
+        </th:block>
+        <a href="/about_hall_man#location-section">Location & Direction</a>
+      </div>
+    </div>
+
+    <!-- Management Dropdown for Provost -->
+    <th:block th:if="${user != null && user.role == 'PROVOST'}">
+      <div class="dropdown">
+        <a href="/provost/seat-approval">Management</a>
+        <div class="dropdown-content">
+          <a href="/provost/seat-approval">Seat Approval</a>
+          <a href="/provost/allottees">Allottees</a>
+          <a href="/provost/paymentConfirmapplicant">Payment List</a>
+          <a href="/provost/unpaymentList">Unpayment List</a>
+          <a href="/provost/seat-cancellation">Seat Cancellation</a>
+        </div>
+      </div>
+    </th:block>
+
+    <!-- Notice Link -->
+    <th:block th:if="${user != null}">
+      <a th:if="${user.role == 'PROVOST' || user.role == 'STAF'}"
+         href="/notice/admin/noticegen">Notices Gen</a>
+      <a th:unless="${user.role == 'PROVOST' || user.role == 'STAF'}"
+         href="/notice">Notice</a>
+    </th:block>
+
+    <!-- User Profile and Logout -->
+    <th:block th:if="${user != null}">
+      <a href="/profile" th:text="${user.username}"></a>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </th:block>
+
+    <!-- Login Link for non-logged in users -->
+    <th:block th:unless="${user != null}">
+      <a href="/login">Login</a>
+    </th:block>
+  </div>
+</nav>
+
+<div class="section">
+  <h2>Pending Seat Approvals</h2>
+
+  <div class="search-container">
+    <form th:action="@{/provost/seat-approval}" method="get">
+      <input type="text" name="search" th:value="${currentSearch}"
+             placeholder="Search by student ID or name">
+      <button type="submit">Search</button>
+      <a th:href="@{/provost/seat-approval}" class="action-btn">Reset</a>
+<!--      &lt;!&ndash; Add this new button &ndash;&gt;-->
+<!--      <button id="generatePdfBtn" class="btn btn-primary" style="background-color: #4CAF50;">-->
+<!--        Generate PDF of Approved Seats-->
+<!--      </button>-->
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="application-table">
+      <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>Father's Income</th>
+        <th>Address</th>
+        <th>Reason</th>
+        <th>Hall Name</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="request : ${seatRequests.content}">
+        <td th:text="${request.user.id}">2023001</td>
+        <td th:text="${request.user.username}">John Doe</td>
+        <td th:text="${request.familyIncome}">50000</td>
+        <td th:text="${request.permanentAddress}">123 Main St</td>
+        <td th:text="${request.reason}">Need accommodation</td>
+        <td th:text="${request.user.hallName}">SRH</td>
+        <td>
+          <div class="application-actions">
+            <button class="btn btn-success"
+                    th:data-id="${request.id}"
+                    onclick="handleAction(this, 'approve')">
+              Approve
+            </button>
+            <button class="btn btn-danger"
+                    th:data-id="${request.id}"
+                    onclick="handleAction(this, 'reject')">
+              Reject
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr th:if="${seatRequests.content.isEmpty()}">
+        <td colspan="7" class="text-center">No pending applications found</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" th:if="${seatRequests.totalPages > 1}">
+    <a th:href="@{/provost/seat-approval(page=1, size=${seatRequests.size}, search=${currentSearch})}"
+       th:classappend="${seatRequests.first} ? 'disabled' : ''">First</a>
+
+    <a th:href="@{/provost/seat-approval(page=${seatRequests.number}, size=${seatRequests.size}, search=${currentSearch})}"
+       th:classappend="${seatRequests.first} ? 'disabled' : ''">Previous</a>
+
+    <span th:each="i : ${#numbers.sequence(1, seatRequests.totalPages)}">
+      <a th:if="${i != seatRequests.number + 1}"
+         th:href="@{/provost/seat-approval(page=${i}, size=${seatRequests.size}, search=${currentSearch})}"
+         th:text="${i}"></a>
+      <span th:unless="${i != seatRequests.number + 1}"
+            class="active" th:text="${i}"></span>
+    </span>
+
+    <a th:href="@{/provost/seat-approval(page=${seatRequests.number + 2}, size=${seatRequests.size}, search=${currentSearch})}"
+       th:classappend="${seatRequests.last} ? 'disabled' : ''">Next</a>
+
+    <a th:href="@{/provost/seat-approval(page=${seatRequests.totalPages}, size=${seatRequests.size}, search=${currentSearch})}"
+       th:classappend="${seatRequests.last} ? 'disabled' : ''">Last</a>
+  </div>
+</div>
+
+<!-- Room Selection Modal -->
+<div id="roomModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Available Rooms</h3>
+    <div id="roomList" class="room-list">
+      <!-- Rooms will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- Seat Selection Modal -->
+<div id="seatModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Available Seats in Room <span id="roomNumberDisplay"></span></h3>
+    <div id="seatList" class="seat-list">
+      <!-- Seats will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Seat Assignment</h3>
+    <p>Assign seat <span id="seatToAssign"></span> in room <span id="roomToAssign"></span> to this student?</p>
+    <div class="modal-actions">
+      <button id="confirmAssign" class="btn btn-success">Confirm</button>
+      <button id="cancelAssign" class="btn btn-danger" onclick="closeConfirmModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentRequestId = null;
+  let currentRoomNumber = null;
+
+  async function handleAction(button, action) {
+    const requestId = button.getAttribute('data-id');
+
+    if (action === 'reject') {
+      if (confirm('Are you sure you want to reject this application?')) {
+        await processRequest(requestId, 'reject');
+      }
+      return;
+    }
+
+    // For 'approve' action
+    currentRequestId = requestId;
+    showAvailableRooms();
+  }
+
+  async function processRequest(requestId, action) {
+    const endpoint = `/api/seat-requests/${requestId}/${action}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (response.ok) {
+        alert(`Request ${action}d successfully!`);
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message || 'Failed to process request'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  }
+
+  async function showAvailableRooms() {
+    try {
+      const response = await fetch('/api/hall/available-rooms');
+      const rooms = await response.json();
+
+      const roomList = document.getElementById('roomList');
+      roomList.innerHTML = '';
+
+      rooms.forEach(room => {
+        const roomItem = document.createElement('div');
+        roomItem.className = 'room-item';
+        roomItem.textContent = room;
+        roomItem.onclick = () => showAvailableSeats(room);
+        roomList.appendChild(roomItem);
+      });
+
+      document.getElementById('roomModal').style.display = 'block';
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      alert('Failed to load available rooms');
+    }
+  }
+
+  async function showAvailableSeats(roomNumber) {
+    currentRoomNumber = roomNumber;
+
+    try {
+      const response = await fetch(`/api/hall/available-seats?room=${roomNumber}`);
+      const seats = await response.json();
+
+      document.getElementById('roomNumberDisplay').textContent = roomNumber;
+      const seatList = document.getElementById('seatList');
+      seatList.innerHTML = '';
+
+      seats.forEach(seat => {
+        const seatItem = document.createElement('div');
+        seatItem.className = seat.status ? 'seat-item booked' : 'seat-item';
+        seatItem.textContent = seat.seatNumber;
+
+        if (!seat.status) {
+          seatItem.onclick = () => showConfirmation(roomNumber, seat.seatNumber);
+        }
+
+        seatList.appendChild(seatItem);
+      });
+
+      document.getElementById('roomModal').style.display = 'none';
+      document.getElementById('seatModal').style.display = 'block';
+    } catch (error) {
+      console.error('Error fetching seats:', error);
+      alert('Failed to load available seats');
+    }
+  }
+
+  function showConfirmation(roomNumber, seatNumber) {
+    document.getElementById('roomToAssign').textContent = roomNumber;
+    document.getElementById('seatToAssign').textContent = seatNumber;
+    document.getElementById('seatModal').style.display = 'none';
+    document.getElementById('confirmModal').style.display = 'block';
+  }
+
+  function closeConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+    document.getElementById('seatModal').style.display = 'block';
+  }
+
+  // Modal close handlers
+  document.querySelectorAll('.close').forEach(closeBtn => {
+    closeBtn.onclick = function() {
+      document.getElementById('roomModal').style.display = 'none';
+      document.getElementById('seatModal').style.display = 'none';
+      document.getElementById('confirmModal').style.display = 'none';
+    };
+  });
+
+  // Close modals when clicking outside
+  window.onclick = function(event) {
+    if (event.target.className === 'modal') {
+      document.getElementById('roomModal').style.display = 'none';
+      document.getElementById('seatModal').style.display = 'none';
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+  };
+
+  // Confirm assignment handler
+  document.getElementById('confirmAssign').onclick = async function() {
+    document.getElementById('confirmModal').style.display = 'none';
+
+    try {
+      const response = await fetch(`/api/seat-requests/${currentRequestId}/assign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          roomNumber: currentRoomNumber,
+          seatNumber: document.getElementById('seatToAssign').textContent
+        })
+      });
+
+      if (response.ok) {
+        alert('Seat assigned successfully!');
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message || 'Failed to assign seat'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
+  // Add this to your existing JavaScript
+  document.getElementById('generatePdfBtn').addEventListener('click', generatePdf);
+
+  async function generatePdf() {
+    try {
+      const response = await fetch('/api/generate-seat-pdf', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf'
+        }
+      });
+
+      if (response.ok) {
+        // Create a blob from the response
+        const blob = await response.blob();
+
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'approved_seats.pdf';
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        const error = await response.text();
+        alert('Failed to generate PDF: ' + error);
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('An error occurred while generating PDF');
+    }
+  }
+</script>
+</body>
+</html>

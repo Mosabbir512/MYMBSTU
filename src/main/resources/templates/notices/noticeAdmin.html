@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Generation - MBSTU Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: white;
+            padding-top: 70px;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: linear-gradient(rgba(224, 255, 255, 0.1), rgba(224, 255, 255, 0.1)),
+            url('/baro.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #148F77;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #1a5276;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: #E74C3C;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 220px;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-item {
+            padding: 0.8rem 1.5rem;
+            color: #1a5276;
+            text-decoration: none;
+            display: block;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: #E8F8F5;
+            border-left-color: #76D7C4;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: #E74C3C;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #CB4335;
+        }
+
+        /* Main Content Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 2rem 0;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #76D7C4;
+            color: #1a5276;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #E8F8F5;
+        }
+
+        .nav-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #148F77;
+        }
+
+        .nav-card p {
+            font-size: 0.9rem;
+            color: #2E86C1;
+        }
+
+        /* Statistics Section */
+        .stats-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #76D7C4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-box {
+            text-align: center;
+            padding: 1.5rem;
+            background: #E8F8F5;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-box h2 {
+            color: #148F77;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-box p {
+            color: #1a5276;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .notice-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            color: #148F77;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1a5276;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #E8F8F5;
+            color: #148F77;
+            border: 1px dashed #76D7C4;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: #D1F2EB;
+        }
+
+        .file-name {
+            margin-left: 10px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .submit-btn {
+            background: #148F77;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            background: #117A65;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #D5F5E3;
+            color: #27AE60;
+            border: 1px solid #A3E4D7;
+        }
+
+        .alert-error {
+            background-color: #FADBD8;
+            color: #E74C3C;
+            border: 1px solid #F5B7B1;
+        }
+
+        /* Editor Styles */
+        .description-editor {
+            min-height: 150px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .editable-date {
+            color: #148F77;
+            text-decoration: underline;
+            cursor: pointer;
+            background: #E8F8F5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .editable-date:hover {
+            background: #D1F2EB;
+        }
+
+        input[type="date"] {
+            z-index: 1000;
+            padding: 8px;
+            border: 1px solid #148F77;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .date-info {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* Custom Message Styles */
+        .add-message-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .add-message-btn:hover {
+            background: #2980b9;
+        }
+
+        .custom-message-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .message-buttons {
+            margin-top: 5px;
+        }
+
+        .insert-message-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .cancel-message-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .dropdown-content {
+                position: static;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <a href="/home" class="navbar-brand">MYMBSTU</a>
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="/about" class="nav-link">About ▼</a>
+            <div class="dropdown-content">
+                <a href="/about/mawlana" class="dropdown-item">About Mawlana Bhashani</a>
+                <a href="/about/achievements" class="dropdown-item">Achievements</a>
+                <a href="/about/news" class="dropdown-item">News & Updates</a>
+                <a href="/about/events" class="dropdown-item">University Events</a>
+                <a href="/about/facts" class="dropdown-item">Facts & Statistics</a>
+                <a href="/about/location" class="dropdown-item">Location & Directions</a>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a href="/notices" class="nav-link">Notices ▼</a>
+            <div class="dropdown-content">
+                <a href="/notices/academic" class="dropdown-item">Academic Notices</a>
+                <a href="/notices/administration" class="dropdown-item">Administration Notices</a>
+                <a href="/notices/events" class="dropdown-item">Event Notices</a>
+                <a href="/notices/results" class="dropdown-item">Exam Results</a>
+                <a href="/notices/tenders" class="dropdown-item">Tenders</a>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a href="/contact" class="nav-link">Contact ▼</a>
+            <div class="dropdown-content">
+                <a href="/contact/aboutDevelopers" class="dropdown-item">About Developers</a>
+                <a href="/contact/feedback" class="dropdown-item">Feedback Form</a>
+            </div>
+        </li>
+
+        <li class="nav-item" th:if="${user != null || ('ADMIN'.equalsIgnoreCase(user.role))}">
+            <a href="/noticeAdmin" class="nav-link">Notice Gen ▼</a>
+        </li>
+
+        <!-- Conditional Rendering for User Info -->
+        <li class="nav-item user-info" th:if="${user != null}">
+            <span style="color: black;">Welcome, <strong th:text="${user.id}"></strong></span>
+            <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+            <a href="/login" class="nav-link">Login</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="notice-form">
+        <h2 class="form-title">Generate New Notice</h2>
+        <form th:action="@{b}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="hallName" th:value="${user.hallName}">
+
+            <div class="form-group">
+                <label for="title">Notice Title</label>
+                <input type="text" id="title" name="title" th:value="${notice?.title}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="noticeType">Notice Type</label>
+                <select id="noticeType" name="noticeType" required>
+                    <option value="">Select Notice Type</option>
+                    <option value="AcademicNotices">Academic Notices</option>
+                    <option value="AdministrationNotices">Administration Notices</option>
+                    <option value="EventNotices">Event Notices</option>
+                    <option value="ExamResults">Exam Results</option>
+                    <option value="Tenders">Tenders</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Notice Description</label>
+                <textarea id="description" name="description" th:text="${notice?.description}" required
+                          style="display: none;"></textarea>
+                <div id="description-editor" class="description-editor" contenteditable="true"></div>
+
+                <!-- Add Custom Message Section -->
+                <button type="button" id="add-message-btn" class="add-message-btn">
+                    <i class="fas fa-plus"></i> Add Custom Message
+                </button>
+                <input type="text" id="custom-message-input" class="custom-message-input"
+                       placeholder="Enter your additional message...">
+                <div class="message-buttons" id="message-buttons" style="display: none;">
+                    <button type="button" id="insert-message-btn" class="insert-message-btn">Insert</button>
+                    <button type="button" id="cancel-message-btn" class="cancel-message-btn">Cancel</button>
+                </div>
+
+                <!-- Hidden fields for dates -->
+                <input type="hidden" id="startDate" name="startDate">
+                <input type="hidden" id="endDate" name="endDate">
+                <div class="date-info" id="date-info" style="display: none;">
+                    Dates set: <span id="start-date-display"></span> to <span id="end-date-display"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="file">Attachment (Optional)</label>
+                <input type="file" id="file" name="file" class="file-input">
+                <label for="file" class="file-label">
+                    <i class="fas fa-paperclip"></i> Choose File
+                </label>
+                <span id="file-name" class="file-name">No file chosen</span>
+            </div>
+
+            <button type="submit" class="submit-btn">Generate Notice</button>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userHallName = [[${user.hallName}]];
+
+    /*]]>*/
+</script>
+
+<script>
+    // Show selected file name
+    document.getElementById('file').addEventListener('change', function (e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+        document.getElementById('file-name').textContent = fileName;
+    });
+
+    // Auto-fill description based on notice type
+    document.getElementById('noticeType').addEventListener('change', function (e) {
+        const noticeType = e.target.value;
+        const descriptionTextarea = document.getElementById('description');
+        const descriptionEditor = document.getElementById('description-editor');
+        const dateInfo = document.getElementById('date-info');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        // Reset dates when notice type changes
+        startDateInput.value = '';
+        endDateInput.value = '';
+        dateInfo.style.display = 'none';
+
+        // Define predefined texts with date placeholders
+        const predefinedTexts = {
+
+
+                'AcademicNotices':
+                    'This is to inform all students about important academic matters...',
+                'AdministrationNotices':
+                    'Dear students of [hallName], you should apply for a hall seat between [startDate] and [endDate] if you want to get a seat in our hall.',
+                'EventNotices':
+                    'Dear students of [hallName], who are apply for seat, your viva will be held on [startDate] and [endDate], must brings your last semester grade Sheet.',
+                'ExamResults':
+                    'Dear students of [hallName],\n' +
+                    'Those of you who have received a seat in the hall are instructed to pay the required amount for hall session charges, hall rent, and other expenses, and collect the bank receipt from the hall office. You can pay the amount by [endDate]. Failure to make the payment within the given time will result in the cancellation of your hall seat.',
+                'Tenders':
+                    'Dear students of [hallName],\n' +
+                    'Those of you who have received a seat in the hall are instructed to pay the required amount for hall session charges, hall rent, and other expenses, and collect the bank receipt from the hall office. You can pay the amount by [endDate]. Failure to make the payment within the given time will result in the cancellation of your hall seat.',
+
+            }
+        ;
+
+        if (!noticeType || !predefinedTexts[noticeType]) {
+            descriptionTextarea.style.display = 'block';
+            descriptionEditor.style.display = 'none';
+            descriptionTextarea.value = '';
+        } else {
+            // Only replace if the current content is empty or matches a template
+            if (!descriptionEditor.textContent.trim() ||
+                Object.values(predefinedTexts).some(text => descriptionEditor.textContent.trim().includes(text.split('[')[0]))) {
+                descriptionTextarea.value = predefinedTexts[noticeType];
+                replacePlaceholdersWithEditableDates();
+            }
+        }
+    });
+
+    // Custom message functionality
+    document.getElementById('add-message-btn').addEventListener('click', function () {
+        const messageInput = document.getElementById('custom-message-input');
+        const messageButtons = document.getElementById('message-buttons');
+
+        messageInput.style.display = 'block';
+        messageButtons.style.display = 'block';
+        this.style.display = 'none';
+
+        messageInput.focus();
+    });
+
+    document.getElementById('insert-message-btn').addEventListener('click', function () {
+        const messageInput = document.getElementById('custom-message-input');
+        const descriptionEditor = document.getElementById('description-editor');
+        const addMessageBtn = document.getElementById('add-message-btn');
+
+        if (messageInput.value.trim()) {
+            // Insert at cursor position or at the end
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(messageInput.value));
+            } else {
+                descriptionEditor.innerHTML += `<p>${messageInput.value}</p>`;
+            }
+
+            // Update the hidden textarea
+            document.getElementById('description').value = descriptionEditor.innerText;
+        }
+
+        // Reset the message input
+        messageInput.value = '';
+        messageInput.style.display = 'none';
+        this.parentElement.style.display = 'none';
+        addMessageBtn.style.display = 'inline-block';
+    });
+
+    document.getElementById('cancel-message-btn').addEventListener('click', function () {
+        const messageInput = document.getElementById('custom-message-input');
+        const messageButtons = document.getElementById('message-buttons');
+        const addMessageBtn = document.getElementById('add-message-btn');
+
+        messageInput.value = '';
+        messageInput.style.display = 'none';
+        messageButtons.style.display = 'none';
+        addMessageBtn.style.display = 'inline-block';
+    });
+
+    function replacePlaceholdersWithEditableDates() {
+        const descriptionTextarea = document.getElementById('description');
+        const descriptionEditor = document.getElementById('description-editor');
+        const content = descriptionTextarea.value;
+        const dateInfo = document.getElementById('date-info');
+
+        // Replace placeholders with editable spans and hall name
+        let newContent = content
+            .replace('[hallName]', userHallName)
+            .replace('[startDate]', `<span class="editable-date" data-date-type="start">DD/MM/YYYY</span>`)
+            .replace('[endDate]', `<span class="editable-date" data-date-type="end">DD/MM/YYYY</span>`);
+
+        // Update the editor
+        descriptionEditor.innerHTML = newContent;
+        descriptionTextarea.value = descriptionEditor.innerText;
+
+        // Add date picker functionality to the editable dates
+        document.querySelectorAll('.editable-date').forEach(el => {
+            el.addEventListener('click', function (e) {
+                e.stopPropagation();
+                showDatePicker(this);
+            });
+        });
+
+        // Show date info if dates are already set
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        if (startDateInput.value && endDateInput.value) {
+            updateDateInfoDisplay();
+        }
+    }
+
+    function showDatePicker(element) {
+        // Create a date input element
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date';
+        dateInput.style.position = 'absolute';
+        dateInput.style.left = `${element.getBoundingClientRect().left}px`;
+        dateInput.style.top = `${element.getBoundingClientRect().bottom}px`;
+
+        // When date is selected, update the element
+        dateInput.addEventListener('change', function () {
+            if (!this.value) return; // If user cleared the date picker
+
+            const date = new Date(this.value);
+            const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+            element.textContent = formattedDate;
+            document.body.removeChild(dateInput);
+
+            // Update the hidden date fields and display
+            updateHiddenDateFields();
+            updateDateInfoDisplay();
+        });
+
+        // Add to document
+        document.body.appendChild(dateInput);
+        dateInput.focus();
+
+        // Remove date picker if clicked outside
+        const clickOutsideHandler = (e) => {
+            if (!dateInput.contains(e.target)) {
+                document.body.removeChild(dateInput);
+                document.removeEventListener('click', clickOutsideHandler);
+            }
+        };
+        document.addEventListener('click', clickOutsideHandler);
+    }
+
+    function updateHiddenDateFields() {
+        const descriptionEditor = document.getElementById('description-editor');
+        const descriptionTextarea = document.getElementById('description');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        // Update the hidden textarea
+        descriptionTextarea.value = descriptionEditor.innerText;
+
+        // Find and update the date fields
+        const dates = descriptionEditor.querySelectorAll('.editable-date');
+        dates.forEach(el => {
+            const dateType = el.getAttribute('data-date-type');
+            const dateText = el.textContent;
+
+            if (dateText.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                const [day, month, year] = dateText.split('/');
+                const isoDate = `${year}-${month}-${day}`;
+
+                if (dateType === 'start') {
+                    startDateInput.value = isoDate;
+                } else if (dateType === 'end') {
+                    endDateInput.value = isoDate;
+                }
+            } else {
+                // Clear the date if it's not in the correct format
+                if (dateType === 'start') {
+                    startDateInput.value = '';
+                } else if (dateType === 'end') {
+                    endDateInput.value = '';
+                }
+            }
+        });
+    }
+
+    function updateDateInfoDisplay() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const dateInfo = document.getElementById('date-info');
+        const startDateDisplay = document.getElementById('start-date-display');
+        const endDateDisplay = document.getElementById('end-date-display');
+
+        if (startDateInput.value && endDateInput.value) {
+            const [startYear, startMonth, startDay] = startDateInput.value.split('-');
+            const [endYear, endMonth, endDay] = endDateInput.value.split('-');
+
+            startDateDisplay.textContent = `${startDay}/${startMonth}/${startYear}`;
+            endDateDisplay.textContent = `${endDay}/${endMonth}/${endYear}`;
+            dateInfo.style.display = 'block';
+        } else {
+            dateInfo.style.display = 'none';
+        }
+    }
+
+    // Handle form submission
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const descriptionEditor = document.getElementById('description-editor');
+        const descriptionTextarea = document.getElementById('description');
+        descriptionTextarea.value = descriptionEditor.innerText;
+    });
+
+    // Initialize the editor
+    document.addEventListener('DOMContentLoaded', function () {
+        const descriptionTextarea = document.getElementById('description');
+        const descriptionEditor = document.getElementById('description-editor');
+
+        // Set initial content
+        if (descriptionTextarea.value) {
+            descriptionEditor.innerHTML = descriptionTextarea.value;
+
+            // Add click handlers for any existing date spans
+            descriptionEditor.querySelectorAll('.editable-date').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    showDatePicker(this);
+                });
+            });
+        }
+
+        descriptionEditor.addEventListener('blur', function () {
+            updateHiddenDateFields();
+        });
+    });
+</script>
+</body>
+</html>

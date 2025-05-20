@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MBSTU - Hall Notices</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #1a5276;
+            background-color: #ffffff;
+            padding-top: 70px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: linear-gradient(rgba(224, 255, 255, 0.1), rgba(224, 255, 255, 0.1)),
+            url('/baro.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #148F77;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1a5276;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #E74C3C;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            min-width: 220px;
+            z-index: 1001;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            padding: 0.8rem 1.5rem;
+            color: #1a5276;
+            text-decoration: none;
+            display: block;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-content a:hover {
+            background: #E8F8F5;
+            border-left-color: #76D7C4;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: 8px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .logout-btn:hover {
+            background: #c82333 !important;
+        }
+
+        /* Notices Page Styles */
+        .notices-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notice-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #76D7C4;
+            scroll-margin-top: 70px;
+        }
+
+        .notice-section h2 {
+            color: #148F77;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        /* Notice cards */
+        .notice-card {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #E8F8F5;
+            border-radius: 8px;
+            border-left: 4px solid #76D7C4;
+            transition: all 0.3s ease;
+        }
+
+        .notice-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .notice-title {
+            font-size: 1.1rem;
+            color: #1a5276;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .notice-date {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        .notice-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* No notices message */
+        .no-notices {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .dropdown-content {
+                position: static;
+                box-shadow: none;
+                background: rgba(255,255,255,0.8);
+                width: 100%;
+            }
+
+            .notice-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/home" class="nav-brand">MYMBSTU</a>
+    <div class="nav-links">
+        <a href="/home">Home</a>
+        <div class="dropdown">
+            <a href="/about_hall_man">About Hall</a>
+            <div class="dropdown-content">
+                <a href="/about_hall_man">About Hall</a>
+                <th:block th:unless="${user != null && (user.username == 'provost' || user.username == 'staf')}">
+                    <a href="/about_hall_man#services-section">Services</a>
+                </th:block>
+                <th:block th:if="${user != null && (user.username == 'provost' || user.username == 'staf')}">
+                    <a href="/about_hall_man#admin-section">Admin Dashboard</a>
+                </th:block>
+                <a href="/about_hall_man#location-section">Location & Direction</a>
+            </div>
+        </div>
+
+        <th:block th:if="${user != null && user.username == 'provost'}">
+            <div class="dropdown">
+                <a href="#">Management</a>
+                <div class="dropdown-content">
+                    <a href="/provost/seat-approval">Seat Approval</a>
+                    <a href="/provost/allottees">Allottees</a>
+                    <a href="/provost/paymentConfirmapplicant">Payment List</a>
+                    <a href="/provost/unpaymentList">Unpayment List</a>
+                    <a href="/provost/seat-cancellation">Seat Cancellation</a>
+                </div>
+            </div>
+        </th:block>
+
+        <th:block th:if="${user != null}">
+            <a th:if="${user.username == 'provost' || user.username == 'staf'}"
+               href="/notice/admin/noticegen">Notices Gen</a>
+            <a th:unless="${user.username == 'provost' || user.username == 'staf'}"
+               href="/notice" class="active">Notice</a>
+        </th:block>
+
+        <th:block th:if="${user != null}">
+            <a href="/profile" th:text="${user.id}"></a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </th:block>
+        <th:block th:unless="${user != null}">
+            <a href="/login">Login</a>
+        </th:block>
+    </div>
+</nav>
+
+<div class="notices-container">
+    <section id="notice" class="notice-section">
+        <div class="notices-list" th:if="${not #lists.isEmpty(noticeSeat)}">
+            <div class="notice-card" th:each="notice : ${noticeSeat}">
+                <h3 class="notice-title" th:text="${notice.title}">Notice Title</h3>
+                <div class="notice-date" th:text="${notice.startDate}">2025-03-15</div>
+                <p class="notice-desc" th:text="${notice.description}">Notice description goes here...</p>
+                <div th:if="${notice.getFilePath()} != null">
+                    <a th:href="@{'/download-notice/' + ${notice.id}}"
+                       class="pdf-link"
+                       th:text="${notice.fileName}">
+                        PDF File
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="no-notices" th:if="${#lists.isEmpty(noticeSeat)}">
+            No hall notices available at this time.
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Logout confirmation
+        window.confirmLogout = function() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        };
+    });
+</script>
+</body>
+</html>

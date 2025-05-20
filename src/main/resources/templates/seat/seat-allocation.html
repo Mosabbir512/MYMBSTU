@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seat Allocation - MYMBSTU</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/baro.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .seat-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 2.5rem;
+
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 600px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+    }
+
+    .header p {
+      color: #7f8c8d;
+      margin: 0;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .seat-card {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .seat-title {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .seat-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .detail-item {
+      margin-bottom: 0.8rem;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #34495e;
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.9rem;
+    }
+
+    .detail-value {
+      background: white;
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .qr-code {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    .qr-code img {
+      width: 150px;
+      height: 150px;
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      background: white;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2980b9, #1a5276);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7f8c8d, #6c7a7d);
+    }
+
+    .validity {
+      text-align: center;
+      margin-top: 1rem;
+      font-style: italic;
+      color: #7f8c8d;
+    }
+
+    .payment-pending {
+      color: #d35400;
+      font-weight: bold;
+    }
+
+    .payment-confirmed {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    /* Add these new styles */
+    .payment-status {
+      grid-column: span 2;
+      text-align: center;
+      padding: 0.8rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .payment-pending-status {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .payment-confirmed-status {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+  </style>
+</head>
+<body>
+<div class="seat-container">
+  <div class="header">
+    <h1>Seat Allocation Details</h1>
+
+  </div>
+
+  <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}">
+    No seat allocation found for your account.
+  </div>
+
+  <div th:if="${seat}" class="seat-card">
+    <div class="seat-title">
+      Your Allocated Seat
+    </div>
+
+    <div class="seat-details">
+      <div class="detail-item">
+        <span class="detail-label">Hall Name</span>
+        <div class="detail-value" th:text="${seat.hallName}">Hall Name</div>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Room Number</span>
+        <div class="detail-value" th:text="${seat.roomNumber}">Room Number</div>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Seat Number</span>
+        <div class="detail-value" th:text="${seat.seatNumber}">Seat Number</div>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Session</span>
+        <div class="detail-value" th:text="${seat.sessionId}">Session</div>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Allocation Date</span>
+        <div class="detail-value" th:text="${seat.allocationDate}">Allocation Date</div>
+      </div>
+
+      <!-- Payment Status Message -->
+      <div th:if="${seat.payment == 'PENDING'}" class="payment-status payment-pending-status">
+        Payment Pending - Please complete your payment
+      </div>
+
+      <div th:if="${seat.payment == 'CONFIRMED'}" class="payment-status payment-confirmed-status">
+        Payment Confirmed Successfully!
+      </div>
+
+      <!-- Buttons Section -->
+      <div class="buttons">
+        <!-- Show Confirm Payment button only when payment is pending -->
+        <a th:if="${seat.payment == 'PENDING'}" href="/confirm-payment" class="btn btn-secondary">Confirm Payment</a>
+
+        <!-- Always show Back to Dashboard button -->
+        <a href="/about_hall_man" class="btn btn-primary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
