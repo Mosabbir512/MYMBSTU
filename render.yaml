@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mymbstu
+    env: docker
+    region: oregon
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: DATABASE_URL
+        value: jdbc:postgresql://dpg-d0n143be5dus73atep60-a.oregon-postgres.render.com:5432/mymbstu?sslmode=require
+      - key: DATABASE_USERNAME
+        value: mymbstu_user
+      - key: DATABASE_PASSWORD
+        value: klXVpoMSQL19HL119WhHiXzJq8WesJbF
