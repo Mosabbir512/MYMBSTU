@@ -78,7 +78,7 @@ public class mainController {
         }
         model.addAttribute("user", user);
 
-        return "/home";
+        return "home";
     }
 
 
