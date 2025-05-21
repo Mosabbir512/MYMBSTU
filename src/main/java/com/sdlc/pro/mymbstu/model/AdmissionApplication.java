@@ -21,7 +21,11 @@ public class AdmissionApplication {
 
     @Column
     private String appPass;
+
+    @Column(name = "\"user\"")
     private String user;
+
+    //private String user;
 
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^(?:\\+88|88)?(01[3-9]\\d{8})$", message = "Invalid Bangladeshi phone number")
