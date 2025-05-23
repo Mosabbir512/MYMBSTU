@@ -28,10 +28,10 @@ MymbstuApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-       // diaryImportService.importCsv();
+        diaryImportService.importCsv();
         try {
             List<PredefinedStudent> students = predefinedStudentService.readStudentsFromCSV();
-            //predefinedStudentService.saveAllStudents(students);
+            predefinedStudentService.saveAllStudents(students);
             System.out.println("Successfully loaded " + students.size() + " predefined students into database.");
         } catch (Exception e) {
             System.err.println("Failed to load predefined students: " + e.getMessage());

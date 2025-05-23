@@ -24,8 +24,6 @@ public class mainController {
     @Autowired
     private SeatService seatService;
     @Autowired
-    private  DiaryImportService diaryImportService;
-    @Autowired
     private SeatRequestService seatRequestService;
     @Autowired
     private EmailService emailService;
@@ -94,7 +92,6 @@ public class mainController {
             Model model) {
 
 
-        diaryImportService.importCsv();
 
         String email = (String) session.getAttribute("email");
         if (email != null && userService.findByEmail(email) != null) {

@@ -33,7 +33,7 @@ public class PredefinedStudentService {
     public List<PredefinedStudent> readStudentsFromCSV() throws IOException {
         List<PredefinedStudent> students = new ArrayList<>();
 
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("predefined.csv");
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("predefinedstudent.csv");
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
             // Skip header line
