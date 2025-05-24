@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Complaints View - MYMBSTU</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/baro.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .complaint-box {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .solved {
+      border-left: 5px solid #28a745;
+      opacity: 0.8;
+    }
+
+    .status-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+    }
+
+    .unsolved-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .solved-btn {
+      background: #28a745;
+      color: white;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007BFF;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .complaint-details p {
+      margin: 0.5rem 0;
+    }
+
+    .complaint-id {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .complaint-date {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Complaints Management</h1>
+
+  <div th:each="complaint : ${complaints}" class="complaint-box"
+       th:classappend="${complaint.solved} ? 'solved' : ''">
+
+    <div class="complaint-details">
+      <p class="complaint-id">Complaint ID: <span th:text="${complaint.id}"></span></p>
+      <p class="complaint-date">
+        Date:
+        <span th:text="${#temporals.format(complaint.complainDate, 'dd MMM yyyy')}"></span>
+      </p>
+      <p><strong>Complainant:</strong> <span th:text="${complaint.complainant}"></span></p>
+      <p><strong>Complaint:</strong> <span th:text="${complaint.complain}"></span></p>
+    </div>
+
+    <form th:action="@{/toggle-solved/{id}(id=${complaint.id})}" method="post">
+      <button type="submit"
+              class="status-btn"
+              th:class="${complaint.solved} ? 'solved-btn' : 'unsolved-btn'"
+              th:text="${complaint.solved} ? 'Mark as Unsolved' : 'Mark as Solved'">
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +43,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 @Controller
 public class HallReplyController {
+    @Autowired
+    private ComplaintRepository complaintRepository;
     @Autowired
     private JananetaAbdulMannanHallRepository jananetaAbdulMannanHallRepository;
     @Autowired
@@ -243,7 +249,6 @@ public class HallReplyController {
     }
 
 
-
     @GetMapping("/api/hall/available-seats")
     public ResponseEntity<List<SeatInfoDTO>> getAvailableSeatsInRoom(@RequestParam String room, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -256,10 +261,9 @@ public class HallReplyController {
                 seats = ((SheikhRaselHallRepository) repository).findByRoomNumberAndStatusFalse(room);
             } else if (hallName.equals("Jananeta Abdul Mannan Hall")) {
                 seats = ((JananetaAbdulMannanHallRepository) repository).findByRoomNumberAndStatusFalse(room);
-            } else if(hallName.equals("Bangabandhu Sheikh Mujibur Rahman Hall")){
-                seats=((BangabandhuSheikhMujiburRahmanHallRepository)repository).findByRoomNumberAndStatusFalse(room);
-            }
-            else {
+            } else if (hallName.equals("Bangabandhu Sheikh Mujibur Rahman Hall")) {
+                seats = ((BangabandhuSheikhMujiburRahmanHallRepository) repository).findByRoomNumberAndStatusFalse(room);
+            } else {
 
             }
 
@@ -327,7 +331,7 @@ public class HallReplyController {
                                        @RequestParam(required = false) String search,
                                        Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
-        if(user==null){
+        if (user == null) {
             return "redirect:/login";
         }
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -339,8 +343,7 @@ public class HallReplyController {
         model.addAttribute("user", user);
         model.addAttribute("totalPages", cancellationRequests.getTotalPages());
         model.addAttribute("currentSearch", search);
-        model.addAttribute("hall",user.getHallName());
-
+        model.addAttribute("hall", user.getHallName());
 
 
         return "seat/adminHallShow";
@@ -503,7 +506,7 @@ public class HallReplyController {
         cell.setPadding(5);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-       // cell.setBackgroundColor(BaseColor.LIGHT_GRAY);  // Optional: highlight header
+        // cell.setBackgroundColor(BaseColor.LIGHT_GRAY);  // Optional: highlight header
         table.addCell(cell);
     }
 
@@ -529,10 +532,32 @@ public class HallReplyController {
                 return (JpaRepository<T, Long>) jananetaAbdulMannanHallRepository;
             case "Bangabandhu Sheikh Mujibur Rahman Hall":
                 return (JpaRepository<T, Long>) bangabandhuSheikhMujiburRahmanHallRepository;
+
             // other cases
             default:
                 throw new IllegalArgumentException("Unknown hall: " + hallName);
         }
+    }
+
+
+    @GetMapping("/viewcomplain")
+    public String viewComplaints(Model model,HttpSession session) {
+        User user=(User)session.getAttribute("loggedInUser");
+        model.addAttribute("user",user);
+        model.addAttribute("complaints", complaintRepository.findAllByOrderByComplainDateDesc());
+        return "seat/view_complaints";
+    }
+
+    // Toggle solved status POST mapping
+    @PostMapping("/toggle-solved/{id}")
+    public String toggleSolvedStatus(@PathVariable Long id,Model model,HttpSession session) {
+        User user=(User)session.getAttribute("loggedInUser");
+        model.addAttribute("user",user);
+        Complaint complaint = complaintRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid complaint Id:" + id));
+        complaint.setSolved(!complaint.isSolved());
+        complaintRepository.save(complaint);
+        return "redirect:/viewcomplain";
     }
 
 

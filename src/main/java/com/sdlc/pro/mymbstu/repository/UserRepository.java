@@ -19,11 +19,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(@Param("email") String email);
     //Optional<User> findByEmail(String email);
 
-    // Find a user by their ID (assuming ID is unique for each user)
     @Query("SELECT u FROM User u WHERE LOWER(u.id) = LOWER(:id)")
     Optional<User> findById(@Param("id") String id);
     //Optional<User> findById(String id);
 
-    // Count the number of users
     long count(); // This method is inherited from JpaRepository
 }

@@ -78,4 +78,16 @@ public class PredefinedStudent {
     public void setHallPre(String hallPre) {
         this.hallPre = hallPre;
     }
+
+
+    @Override
+    public String toString() {
+        return "PredefinedStudent{" +
+                "idPre='" + idPre + '\'' +
+                ", namePre='" + namePre + '\'' +
+                ", departmentPre='" + departmentPre + '\'' +
+                ", sessionPre='" + sessionPre + '\'' +
+                ", hallPre='" + hallPre + '\'' +
+                '}';
+    }
 }

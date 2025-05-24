@@ -28,6 +28,8 @@ import java.util.Optional;
 public class hallApplyManController {
 
     @Autowired
+    private ComplaintRepository complaintRepository;
+    @Autowired
     private NoticeService noticeService;
     @Autowired
     private TokenRepository tokenRepository;
@@ -426,5 +428,34 @@ public class hallApplyManController {
                     "An unexpected error occurred. Please try again later.");
             return "redirect:/applyLostCertificate";
         }
+    }
+
+    @GetMapping("/complain")
+    public String showComplaintForm(Model model,HttpSession session) {
+        User user=(User)session.getAttribute("loggedInUser");
+        model.addAttribute("user",user);
+        if (!model.containsAttribute("complaint")) {
+            model.addAttribute("complaint", new Complaint());
+        }
+        return "seat/complain";
+    }
+
+    @PostMapping("/complain")
+    public String submitComplaint(@ModelAttribute Complaint complaint,
+                                  HttpSession session,Model model,
+                                  RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if(user == null) {
+            return "redirect:/login";
+        }
+
+
+
+        complaint.setComplainant(user.getUsername());
+        complaint.setComplainDate(LocalDate.now());
+        complaintRepository.save(complaint);
+
+        redirectAttributes.addFlashAttribute("success", true);
+        return "redirect:/complain";
     }
 }

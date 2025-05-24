@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaints List - Admin</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/baro.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .complaint-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .solved {
+      background: #f0fff4;
+      border-left: 4px solid #38a169;
+    }
+
+    .status-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .unsolved-btn {
+      background: #e53e3e;
+      color: white;
+    }
+
+    .solved-btn {
+      background: #38a169;
+      color: white;
+    }
+
+    h1 {
+      color: #2b6cb0;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .complaint-meta {
+      color: #718096;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .complaint-content {
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+
+     .navbar {
+       background-color: #004080;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       padding: 12px 24px;
+       color: white;
+       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+       font-weight: 500;
+     }
+
+    .nav-brand {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background-color: #0059b3;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #004080;
+      min-width: 180px;
+      top: 100%;
+      left: 0;
+      border-radius: 4px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      z-index: 999;
+      flex-direction: column;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: flex;
+    }
+
+    .dropdown-content a {
+      padding: 10px 15px;
+      color: white;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #0059b3;
+    }
+
+    .logout-btn {
+      background-color: #e60000;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #cc0000;
+    }
+
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/home" class="nav-brand">MYMBSTU</a>
+  <div class="nav-links">
+    <a href="/home">Home</a>
+
+    <!-- About Hall Link with Dropdown -->
+    <div class="dropdown">
+      <a href="/about_hall_man">About Hall</a>
+      <div class="dropdown-content">
+        <a href="/about_hall_man#about-section">About Hall</a>
+        <th:block th:unless="${user != null && (user.role == 'PROVOST' || user.role == 'STAF' || user.role=='DOCTOR')}">
+          <a href="/about_hall_man#services-section">Services</a>
+        </th:block>
+        <th:block th:if="${user != null && (user.role == 'PROVOST' || user.role == 'STAF')}">
+          <a href="/about_hall_man#admin-section">Admin Dashboard</a>
+        </th:block>
+        <a href="/about_hall_man#location-section">Location & Direction</a>
+      </div>
+    </div>
+
+    <!-- Management Dropdown for Provost -->
+    <th:block th:if="${user != null && user.role == 'PROVOST'}">
+      <div class="dropdown">
+        <a href="/provost/seat-approval">Management</a>
+        <div class="dropdown-content">
+          <a href="/provost/seat-approval">Seat Approval</a>
+          <a href="/provost/allottees">Allottees</a>
+          <a href="/provost/paymentConfirmapplicant">Payment List</a>
+          <a href="/provost/unpaymentList">Unpayment List</a>
+          <a href="/provost/seat-cancellation">Seat Cancellation</a>
+          <a href="/viewcomplain">View Complaint</a>
+        </div>
+      </div>
+    </th:block>
+
+    <!-- Notice Link -->
+    <th:block th:if="${user != null}">
+      <a th:if="${user.role == 'PROVOST' || user.role == 'STAF'}"
+         href="/notice/admin/noticegen">Notices Gen</a>
+      <a th:unless="${user.role == 'PROVOST' || user.role == 'STAF'}"
+         href="/notice">Notice</a>
+    </th:block>
+
+    <!-- User Profile and Logout -->
+    <th:block th:if="${user != null}">
+      <a href="/profile" th:text="${user.username}"></a>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </th:block>
+
+    <!-- Login Link for non-logged in users -->
+    <th:block th:unless="${user != null}">
+      <a href="/login">Login</a>
+    </th:block>
+  </div>
+</nav>
+<div class="container">
+  <h1>Complaints Management</h1>
+
+  <div th:each="complaint : ${complaints}"
+       class="complaint-card"
+       th:classappend="${complaint.solved} ? 'solved' : ''">
+
+    <div class="complaint-meta">
+      <span>Complaint ID: <strong th:text="${complaint.id}"></strong></span>
+      <span> • </span>
+      <span th:text="${#temporals.format(complaint.complainDate, 'dd MMM yyyy')}"></span>
+      <span> • </span>
+      <span>Submitted by: <strong th:text="${complaint.complainant}"></strong></span>
+    </div>
+
+    <div class="complaint-content">
+      <p th:text="${complaint.complain}"></p>
+    </div>
+
+    <form th:action="@{/toggle-solved/{id}(id=${complaint.id})}" method="post">
+      <button type="submit"
+              class="status-btn"
+              th:class="${complaint.solved} ? 'solved-btn' : 'unsolved-btn'"
+              th:text="${complaint.solved} ? 'Mark as Unsolved' : 'Mark as Solved'">
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -12,7 +12,6 @@ public class Diary {
 
     @Id
     private String email; // Unique identifier
-
     private String name;
     private String designation;
     private String phone;
@@ -48,4 +47,15 @@ public class Diary {
 
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
+
+    @Override
+    public String toString() {
+        return "Diary{" +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", designation='" + designation + '\'' +
+                ", phone='" + phone + '\'' +
+                ", department='" + department + '\'' +
+                '}';
+    }
 }

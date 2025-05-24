@@ -326,7 +326,7 @@
 
     <!-- Conditional Rendering for User Info -->
     <li class="nav-item user-info" th:if="${user != null}">
-      <span style="color: black;">Welcome, <strong th:text="${user.id}"></strong></span>
+      <span style="color: black;">Welcome, <strong th:text="${user.username}"></strong></span>
       <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="logout-btn">Logout</button>
       </form>

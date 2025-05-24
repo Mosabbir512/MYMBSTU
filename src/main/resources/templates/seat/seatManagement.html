@@ -418,15 +418,6 @@
             background-color: #f5f5f5;
         }
 
-        #tokenSearchResults {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            background: white;
-            z-index: 1000;
-        }
     </style>
 </head>
 <body>
@@ -460,6 +451,7 @@
                     <a href="/provost/paymentConfirmapplicant">Payment List</a>
                     <a href="/provost/unpaymentList">Unpayment List</a>
                     <a href="/provost/seat-cancellation">Seat Cancellation</a>
+                    <a href="/viewcomplain">View Complaint</a>
                 </div>
             </div>
         </th:block>
@@ -552,14 +544,14 @@
                 <a href="/applyAttestation">Apply Now</a>
             </div>
             <div class="service-card" onclick="window.location.href='/applyLostCertificate'">
-                <h3>Lost Certificate</h3>
+                <h3>Lost Certificate?</h3>
                 <p>Apply for a lost certificate.</p>
                 <a href="/applyLostCertificate">Apply Now</a>
             </div>
-            <div class="service-card" onclick="window.location.href='/token'">
-                <h3>Hall Token Collection</h3>
-                <p>Collect your hall token.</p>
-                <a href="/token">Collect Now</a>
+            <div class="service-card" onclick="window.location.href='/complain'">
+                <h3>Complain Box</h3>
+                <p>write your complain here</p>
+                <a href="/complain">write Now</a>
             </div>
         </div>
     </div>
@@ -780,28 +772,28 @@
             </div>
 
 
-            <!-- Token Search Section -->
-            <div class="admin-section">
-                <h3>Token Verification</h3>
-                <div style="margin-bottom: 20px;">
-                    <div class="search-box">
-                        <input type="text" id="tokenSearchInput" placeholder="Start typing token number..."
-                               style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"
-                               onkeyup="liveTokenSearch()">
-                    </div>
-                </div>
+<!--            &lt;!&ndash; Token Search Section &ndash;&gt;-->
+<!--            <div class="admin-section">-->
+<!--                <h3>Token Verification</h3>-->
+<!--                <div style="margin-bottom: 20px;">-->
+<!--                    <div class="search-box">-->
+<!--                        <input type="text" id="tokenSearchInput" placeholder="Start typing token number..."-->
+<!--                               style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"-->
+<!--                               onkeyup="liveTokenSearch()">-->
+<!--                    </div>-->
+<!--                </div>-->
 
-                <div id="tokenSearchResults" style="display: none; max-height: 400px; overflow-y: auto;
-         margin-top: 10px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <!-- Results will appear here -->
-                </div>
+<!--                <div id="tokenSearchResults" style="display: none; max-height: 400px; overflow-y: auto;-->
+<!--         margin-top: 10px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">-->
+<!--                    &lt;!&ndash; Results will appear here &ndash;&gt;-->
+<!--                </div>-->
 
-                <div id="tokenDetails"
-                     style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                    <h4>Token Details</h4>
-                    <div id="tokenDetailContent"></div>
-                </div>
-            </div>
+<!--                <div id="tokenDetails"-->
+<!--                     style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">-->
+<!--                    <h4>Token Details</h4>-->
+<!--                    <div id="tokenDetailContent"></div>-->
+<!--                </div>-->
+<!--            </div>-->
 
         </div>
     </div>
@@ -1056,145 +1048,45 @@
     }
 
 
-    function searchToken(event) {
-        event.preventDefault();
-        const tokenNumber = document.getElementById('tokenNumber').value.trim();
-        const tokenResult = document.getElementById('tokenResult');
-        const tokenDetails = document.getElementById('tokenDetails');
 
-        if (!tokenNumber) {
-            showAlert('Please enter a token number', 'error');
-            return;
-        }
-
-        fetch(`/admin/tokens/search?tokenNumber=${encodeURIComponent(tokenNumber)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Token not found');
-                }
-                return response.json();
-            })
-            .then(token => {
-                tokenResult.style.display = 'block';
-                tokenDetails.innerHTML = `
-            <p><strong>Token Number:</strong> ${token.tokenNumber}</p>
-            <p><strong>Student ID:</strong> ${token.studentId}</p>
-            <p><strong>Hall Name:</strong> ${token.hallName}</p>
-            <p><strong>Meal Type:</strong> ${token.mealType}</p>
-            <p><strong>Meal Date:</strong> ${token.mealDate}</p>
-            <p><strong>Status:</strong> ${token.verified ? 'Verified' : 'Not Verified'}</p>
-            ${!token.verified ? `<button onclick="verifyToken('${token.id}')"
-                style="padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
-                Verify Token
-            </button>` : ''}
-        `;
-            })
-            .catch(error => {
-                tokenResult.style.display = 'block';
-                tokenDetails.innerHTML = `<p style="color: #dc3545;">${error.message}</p>`;
-            });
-    }
-
-    function verifyToken(tokenId) {
-        if (confirm('Are you sure you want to verify this token?')) {
-            fetch(`/admin/tokens/verify/${tokenId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        showAlert('Token verified successfully!', 'success');
-                        // Refresh the token details without trying to resubmit the form
-                        const tokenDetails = document.getElementById('tokenDetailContent');
-                        if (tokenDetails) {
-                            const statusElement = tokenDetails.querySelector('p:nth-child(6)');
-                            if (statusElement) {
-                                statusElement.innerHTML = '<strong>Status:</strong> ✅ Verified';
-                            }
-
-                            // Remove the verify button
-                            const verifyBtn = tokenDetails.querySelector('button');
-                            if (verifyBtn) {
-                                verifyBtn.remove();
-                            }
-                        }
-                    } else {
-                        throw new Error('Failed to verify token');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    showAlert(error.message, 'error');
-                });
-        }
-    }
+    // function verifyToken(tokenId) {
+    //     if (confirm('Are you sure you want to verify this token?')) {
+    //         fetch(`/admin/tokens/verify/${tokenId}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         })
+    //             .then(response => {
+    //                 if (response.ok) {
+    //                     showAlert('Token verified successfully!', 'success');
+    //                     // Refresh the token details without trying to resubmit the form
+    //                     const tokenDetails = document.getElementById('tokenDetailContent');
+    //                     if (tokenDetails) {
+    //                         const statusElement = tokenDetails.querySelector('p:nth-child(6)');
+    //                         if (statusElement) {
+    //                             statusElement.innerHTML = '<strong>Status:</strong> ✅ Verified';
+    //                         }
+    //
+    //                         // Remove the verify button
+    //                         const verifyBtn = tokenDetails.querySelector('button');
+    //                         if (verifyBtn) {
+    //                             verifyBtn.remove();
+    //                         }
+    //                     }
+    //                 } else {
+    //                     throw new Error('Failed to verify token');
+    //                 }
+    //             })
+    //             .catch(error => {
+    //                 console.error(error);
+    //                 showAlert(error.message, 'error');
+    //             });
+    //     }
+    // }
 
     let currentTokenSearchQuery = '';
 
-    function liveTokenSearch() {
-        const query = document.getElementById('tokenSearchInput').value.trim().toUpperCase();
-        const resultsDiv = document.getElementById('tokenSearchResults');
-        const detailsDiv = document.getElementById('tokenDetails');
-
-        if (query === '') {
-            resultsDiv.style.display = 'none';
-            resultsDiv.innerHTML = '';
-            detailsDiv.style.display = 'none';
-            currentTokenSearchQuery = '';
-            return;
-        }
-
-        // Only search if the query has changed
-        if (query === currentTokenSearchQuery) return;
-        currentTokenSearchQuery = query;
-
-        fetch(`/admin/tokens/search-live?query=${encodeURIComponent(query)}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Search failed');
-                return response.json();
-            })
-            .then(tokens => {
-                resultsDiv.innerHTML = '';
-
-                if (tokens.length > 0) {
-                    resultsDiv.style.display = 'block';
-
-                    tokens.forEach(token => {
-                        const tokenElement = document.createElement('div');
-                        tokenElement.className = 'result-item';
-                        tokenElement.style.padding = '10px';
-                        tokenElement.style.borderBottom = '1px solid #eee';
-                        tokenElement.style.cursor = 'pointer';
-                        tokenElement.innerHTML = `
-                        <strong>${token.tokenNumber}</strong> -
-                        ${token.studentId} -
-                        ${token.mealType} (${token.mealDate})
-                    `;
-
-                        tokenElement.addEventListener('click', () => {
-                            showTokenDetails(token);
-                            resultsDiv.style.display = 'none';
-                            document.getElementById('tokenSearchInput').value = token.tokenNumber;
-                        });
-
-                        resultsDiv.appendChild(tokenElement);
-                    });
-                } else {
-                    resultsDiv.style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Search error:', error);
-                resultsDiv.style.display = 'none';
-            });
-    }
 
     function showTokenDetails(token) {
         const detailsDiv = document.getElementById('tokenDetails');

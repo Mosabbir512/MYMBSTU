@@ -18,7 +18,6 @@ public class User {
     private String role;     // Role: "ADMIN" or "STUDENT"
     private String department; // Department for students
     private String session2;
-
     private String hallName;
 
     // Default constructor for JPA
@@ -112,6 +111,21 @@ public class User {
 
     public void setHallName(String hallName) {
         this.hallName = hallName;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", role='" + role + '\'' +
+                ", department='" + department + '\'' +
+                ", session2='" + session2 + '\'' +
+                ", hallName='" + hallName + '\'' +
+                '}';
     }
 }
 

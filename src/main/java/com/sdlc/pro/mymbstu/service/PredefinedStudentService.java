@@ -2,19 +2,20 @@ package com.sdlc.pro.mymbstu.service;
 
 import com.sdlc.pro.mymbstu.repository.PredefinedStudentRepository;
 import com.sdlc.pro.mymbstu.model.PredefinedStudent;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PredefinedStudentService {
+
+
 
     @Autowired
    private PredefinedStudentRepository predefinedStudentRepository;
@@ -30,11 +31,12 @@ public class PredefinedStudentService {
         return predefinedStudentOpt.orElse(null);
     }
 
+    @Transactional
     public List<PredefinedStudent> readStudentsFromCSV() throws IOException {
         List<PredefinedStudent> students = new ArrayList<>();
 
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("predefinedstudent.csv");
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new ClassPathResource("predefinedstudent.csv").getFile()))) {
+            br.readLine();
 
             // Skip header line
             br.readLine();
@@ -49,14 +51,20 @@ public class PredefinedStudentService {
                         data[3], // session
                         data[4]  // hall
                 );
+                predefinedStudentRepository.save(student);
+                System.out.println(student.toString());
                 students.add(student);
             }
         }
         return students;
     }
 
-    public void saveAllStudents(List<PredefinedStudent> students) {
-        predefinedStudentRepository.saveAll(students);
+      @Transactional
+    public List<PredefinedStudent> getAllStudents() {
+        predefinedStudentRepository.deleteAll();
+        return predefinedStudentRepository.findAllByOrderByIdPreAsc();
     }
+
+
 
 }

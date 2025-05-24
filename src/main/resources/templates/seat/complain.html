@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <!-- Keep existing styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .complaint-form {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            background: #f8f9fa;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #025aa5;
+        }
+
+        .success-message {
+            background: #dff0d8;
+            color: #3c763d;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #d6e9c6;
+            border-radius: 4px;
+            animation: fadeIn 0.5s;
+        }
+
+        .new-complaint-btn {
+            margin-top: 10px;
+            background: #5cb85c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .navbar {
+            background-color: #003366;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #0055a5;
+        }
+
+        .logout-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #a93226;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .dropdown-content a {
+            color: #003366;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.2s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+
+        .new-complaint-btn:hover {
+            background: #4cae4c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/home" class="nav-brand">MYMBSTU</a>
+    <div class="nav-links">
+        <a href="/home">Home</a>
+
+        <!-- About Hall Link with Dropdown -->
+        <div class="dropdown">
+            <a href="/about_hall_man">About Hall</a>
+            <div class="dropdown-content">
+                <a href="/about_hall_man#about-section">About Hall</a>
+                <th:block th:unless="${user != null && (user.role == 'PROVOST' || user.role == 'STAF' || user.role=='DOCTOR')}">
+                    <a href="/about_hall_man#services-section">Services</a>
+                </th:block>
+                <th:block th:if="${user != null && (user.role == 'PROVOST' || user.role == 'STAF')}">
+                    <a href="/about_hall_man#admin-section">Admin Dashboard</a>
+                </th:block>
+                <a href="/about_hall_man#location-section">Location & Direction</a>
+            </div>
+        </div>
+
+        <!-- Management Dropdown for Provost -->
+        <th:block th:if="${user != null && user.role == 'PROVOST'}">
+            <div class="dropdown">
+                <a href="/provost/seat-approval">Management</a>
+                <div class="dropdown-content">
+                    <a href="/provost/seat-approval">Seat Approval</a>
+                    <a href="/provost/allottees">Allottees</a>
+                    <a href="/provost/paymentConfirmapplicant">Payment List</a>
+                    <a href="/provost/unpaymentList">Unpayment List</a>
+                    <a href="/provost/seat-cancellation">Seat Cancellation</a>
+                    <a href="/viewcomplain">View Complaint</a>
+                </div>
+            </div>
+        </th:block>
+
+        <!-- Notice Link -->
+        <th:block th:if="${user != null}">
+            <a th:if="${user.role == 'PROVOST' || user.role == 'STAF'}"
+               href="/notice/admin/noticegen">Notices Gen</a>
+            <a th:unless="${user.role == 'PROVOST' || user.role == 'STAF'}"
+               href="/notice">Notice</a>
+        </th:block>
+
+        <!-- User Profile and Logout -->
+        <th:block th:if="${user != null}">
+            <a href="/profile" th:text="${user.username}"></a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </th:block>
+
+        <!-- Login Link for non-logged in users -->
+        <th:block th:unless="${user != null}">
+            <a href="/login">Login</a>
+        </th:block>
+    </div>
+</nav>
+
+<div class="complaint-form">
+    <h1>Submit Complaint</h1>
+
+    <!-- Success Message -->
+    <div th:if="${success}" class="success-message">
+         Your complaint has been received successfully!
+<!--        <button class="new-complaint-btn" onclick="resetForm()">-->
+<!--            File Another Complaint-->
+<!--        </button>-->
+    </div>
+
+    <form th:action="@{/complain}" method="post" id="complaintForm">
+        <div class="form-group">
+            <label for="complain">Complaint Details:</label>
+            <textarea id="complain" name="complain"
+                      th:field="*{complaint.complain}"
+                      required
+                      placeholder="Describe your complaint here..."></textarea>
+        </div>
+        <button type="submit">Submit Complaint</button>
+    </form>
+</div>
+
+<script>
+    function resetForm() {
+        document.getElementById('complaintForm').reset();
+        document.querySelector('.success-message').style.display = 'none';
+    }
+
+    // Clear form on page load if coming from redirect
+    window.onload = function() {
+        if(window.location.search.indexOf('success') === -1) {
+            document.getElementById('complaintForm').reset();
+        }
+    };
+</script>
+</body>
+</html>

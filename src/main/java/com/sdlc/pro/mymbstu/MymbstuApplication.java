@@ -1,6 +1,7 @@
 package com.sdlc.pro.mymbstu;
 
 import com.sdlc.pro.mymbstu.model.PredefinedStudent;
+import com.sdlc.pro.mymbstu.repository.PredefinedStudentRepository;
 import com.sdlc.pro.mymbstu.service.DiaryImportService;
 import com.sdlc.pro.mymbstu.service.PredefinedStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,12 @@ MymbstuApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        diaryImportService.importCsv();
+        //diaryImportService.importCsv();
+
         try {
-            List<PredefinedStudent> students = predefinedStudentService.readStudentsFromCSV();
-            predefinedStudentService.saveAllStudents(students);
-            System.out.println("Successfully loaded " + students.size() + " predefined students into database.");
-        } catch (Exception e) {
+           // List<PredefinedStudent> students = predefinedStudentService.readStudentsFromCSV();
+
+              } catch (Exception e) {
             System.err.println("Failed to load predefined students: " + e.getMessage());
             e.printStackTrace();
         }

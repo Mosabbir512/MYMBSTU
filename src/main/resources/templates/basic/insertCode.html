@@ -48,6 +48,17 @@
     .code-form button:hover {
       background-color: #0056b3;
     }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #007BFF;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -56,6 +67,7 @@
   <p style="color: red; text-align: center;" th:if="${errorMessage}" th:text="${errorMessage}"></p>
   <input type="text" name="code" placeholder="Enter Verification Code" required minlength="4">
   <button type="submit">Confirm Registration</button>
+  <a class="back-link" href="/login">Back to Login</a>
 </form>
 </body>
 </html>
