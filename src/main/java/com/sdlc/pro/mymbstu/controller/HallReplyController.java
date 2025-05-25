@@ -70,6 +70,8 @@ public class HallReplyController {
     @Autowired
     private PdfExportService pdfExportService;
     @Autowired
+    private EmailService emailService;
+    @Autowired
     private SeatRepository seatRepository;
     @Autowired
     private AttestationRepository attestationRepository;
@@ -253,7 +255,6 @@ public class HallReplyController {
     public ResponseEntity<List<SeatInfoDTO>> getAvailableSeatsInRoom(@RequestParam String room, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
         String hallName = user.getHallName();
-
         try {
             JpaRepository<?, Long> repository = repository(hallName);
             List<?> seats = new ArrayList<>();
@@ -263,8 +264,16 @@ public class HallReplyController {
                 seats = ((JananetaAbdulMannanHallRepository) repository).findByRoomNumberAndStatusFalse(room);
             } else if (hallName.equals("Bangabandhu Sheikh Mujibur Rahman Hall")) {
                 seats = ((BangabandhuSheikhMujiburRahmanHallRepository) repository).findByRoomNumberAndStatusFalse(room);
+            }else if (hallName.equals("Shahid Ziaur Rahman Hall")) {
+                seats = ((ShahidZiaurRahmanHallRepository) repository).findByRoomNumberAndStatusFalse(room);
+            } else if (hallName.equals("Alema Khatun Bhashani Hall")) {
+                seats = ((AlemaKhatunBhashaniHallRepository) repository).findByRoomNumberAndStatusFalse(room);
+            }else if (hallName.equals("Bangamata Sheikh Fazilatunnesa Mujib Hall")) {
+                seats = ((BangamataHallRepository) repository).findByRoomNumberAndStatusFalse(room);
+            }else if (hallName.equals("Bangamata Sheikh Fazilatunnesa Mujib Hall")) {
+                seats = ((ShaheedJananiJahanaraImamHallRepository) repository).findByRoomNumberAndStatusFalse(room);
             } else {
-
+                seats=null;
             }
 
             List<SeatInfoDTO> seatInfo = seats.stream()
@@ -278,13 +287,25 @@ public class HallReplyController {
                         } else if (seat instanceof BangabandhuSheikhMujiburRahmanHall) {
                             BangabandhuSheikhMujiburRahmanHall b = (BangabandhuSheikhMujiburRahmanHall) seat;
                             return new SeatInfoDTO(b.getSeatNumber(), b.isStatus());
-                        } else {
-                            JananetaAbdulMannanHall j = (JananetaAbdulMannanHall) seat;
+                        } else if(seat instanceof ShahidZiaurRahmanHall) {
+                            ShahidZiaurRahmanHall j = (ShahidZiaurRahmanHall) seat;
+                            return new SeatInfoDTO(j.getSeatNumber(), j.isStatus());
+                        }else if(seat instanceof AlemaKhatunBhashaniHall) {
+                            AlemaKhatunBhashaniHall j = (AlemaKhatunBhashaniHall) seat;
+                            return new SeatInfoDTO(j.getSeatNumber(), j.isStatus());
+                        }else if(seat instanceof ShaheedJananiJahanaraImamHall) {
+                            ShaheedJananiJahanaraImamHall j = (ShaheedJananiJahanaraImamHall) seat;
+                            return new SeatInfoDTO(j.getSeatNumber(), j.isStatus());
+                        }else if(seat instanceof BangamataSheikhFazilatunnesaMujibHall) {
+                            BangamataSheikhFazilatunnesaMujibHall j = (BangamataSheikhFazilatunnesaMujibHall) seat;
+                            return new SeatInfoDTO(j.getSeatNumber(), j.isStatus());
+                        }
+                        else{
+                            ShahidZiaurRahmanHall j = (ShahidZiaurRahmanHall) seat;
                             return new SeatInfoDTO(j.getSeatNumber(), j.isStatus());
                         }
                     })
                     .collect(Collectors.toList());
-
             return ResponseEntity.ok(seatInfo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.ok(Collections.emptyList());
@@ -300,24 +321,24 @@ public class HallReplyController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
-
     @PostMapping("/api/seat-requests/{requestId}/reject")
     public ResponseEntity<?> rejectRequest(@PathVariable Long requestId) {
         try {
             seatRequestService.rejectRequest(requestId);
+            SeatRequest request = seatRequestRepository.findById(requestId)
+                    .orElseThrow(() -> new RuntimeException("Request not found"));
+            String email=request.getUser().getEmail();
+            emailService.sendSimpleMessage(email," Notification About Seat Allocation","We regret to inform you that due to the limited number of available seats, we are unable to allocate you a seat in the hall this time. However, we will try our best to accommodate you in the future, Insha'Allah.");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
-
     @PostMapping("/api/seat-requests/{requestId}/assign")
-    public ResponseEntity<?> assignSeat(
-            @PathVariable Long requestId,
+    public ResponseEntity<?> assignSeat(@PathVariable Long requestId,
             @RequestBody SeatAssignmentDTO assignment, HttpSession session) {
         try {
             hallService.assignSeat(requestId, assignment.getRoomNumber(), assignment.getSeatNumber(), session);
-
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -349,12 +370,6 @@ public class HallReplyController {
         return "seat/adminHallShow";
     }
 
-//    @GetMapping("/api/hall/provost/seat-cancellation")
-//    public String hall(Model model, HttpSession session) {
-//        return "seat/adminHallShow";
-//    }
-
-
     // ID Card Approval
     @PostMapping("/admin/id-card/approve/{id}")
     public String approveIdCard(@PathVariable Long id) {
@@ -363,7 +378,10 @@ public class HallReplyController {
 
         application.setStatus("APPROVED");
         idCardApplicationRepository.save(application);
-
+        emailService.sendSimpleMessage(application.getUser().getEmail(),"Your ID Card is Ready for Collection","I hope you are quite well .\n" +
+                "\n" +
+                "We are pleased to inform you that all processing for your ID card has been successfully completed. " +
+                "You may now collect your ID card from your hall during working hours (9:00 AM to 5:00 PM).");
         return "redirect:/about_hall_man?scrollToAdmin=true";
     }
 
@@ -375,7 +393,7 @@ public class HallReplyController {
 
         application.setStatus("APPROVED");
         attestationRepository.save(application);
-
+        emailService.sendSimpleMessage(application.getUser().getEmail(),"Your Attestation paper is Ready","I hope you are doing well. Your attestation is now complete. You can collect your documents from your [Hall/Office] during working hours (9:00 AM to 5:00 PM)");
         return "redirect:/about_hall_man?scrollToAdmin=true";
     }
 
@@ -388,7 +406,7 @@ public class HallReplyController {
 
         application.setStatus("APPROVED");
         lostCertificateRepository.save(application);
-
+        emailService.sendSimpleMessage(application.getUser().getEmail(),"Your Certificate is Ready","I hope you are doing well. Your certificate is now complete. You can collect your documents from your [Hall/Office] during working hours (9:00 AM to 5:00 PM)");
         return "redirect:/about_hall_man?scrollToAdmin=true";
     }
 
@@ -532,8 +550,14 @@ public class HallReplyController {
                 return (JpaRepository<T, Long>) jananetaAbdulMannanHallRepository;
             case "Bangabandhu Sheikh Mujibur Rahman Hall":
                 return (JpaRepository<T, Long>) bangabandhuSheikhMujiburRahmanHallRepository;
-
-            // other cases
+            case "Shahid Ziaur Rahman Hall":
+                return (JpaRepository<T, Long>) shahidZiaurRahmanHallRepository;
+          case "Alema Khatun Bhashani Hall":
+                return (JpaRepository<T, Long>) alemaKhatunBhashaniHallRepository;
+           case "Shaheed Janani Jahanara Imam Hall":
+                return (JpaRepository<T, Long>) shaheedJananiJahanaraImamHallRepository;
+           case "Bangamata Sheikh Fazilatunnesa Mujib Hall":
+                return (JpaRepository<T, Long>) bangamataHallRepository;
             default:
                 throw new IllegalArgumentException("Unknown hall: " + hallName);
         }

@@ -256,7 +256,7 @@
     fetch(`/api/medicines?term=${encodeURIComponent(name)}`)
             .then(r => r.json())
             .then(meds => {
-              const ok = meds[0]?.availability?.toLowerCase() === 'yes';
+              const ok = meds[0]?.availability?.toLowerCase() === 'available';
               availText.value = ok ? 'Yes' : 'No';
               qtyDiv.style.display = ok ? 'block' : 'none';
             });

@@ -123,6 +123,7 @@ public class mainController {
             HttpSession session,
             Model model) {
 
+
 //        List<PredefinedStudent> allStudents = predefinedStudentService.getAllStudents();
 //        System.out.println("ID | Name | Department | Session | Hall");
 //        User user=userService.findById("IT20019");
@@ -164,7 +165,24 @@ public class mainController {
             HttpSession session,
             Model model) {
 
+
+
+
         User user = userService.findById(id);
+
+
+//       Optional<PredefinedStudent> pre=predefinedStudentRepository.findByIdPre(id);
+//        System.out.println(pre.toString());
+//
+//        Optional<Seat> seat=seatService.findSeatById(id);
+//        System.out.println(seat.toString());
+//         Seat obj=seat.get();
+//         obj.setHallName("Sheikh Rasel Hall");
+//         seatService.saveSeat(obj);
+//
+//        System.out.println(seat.toString());
+//
+//        System.out.println(user);
 
 
         if (user != null && user.getPassword().equals(password)) {
@@ -208,8 +226,6 @@ public class mainController {
     @PostMapping("/register")
     public String processRegistration(
             @RequestParam("id") String id,
-
-
             @RequestParam("password") String password,
             @RequestParam("confirmPassword") String confirmPassword,
 
@@ -313,6 +329,7 @@ public class mainController {
             newSeat.setAllocationDate("no allocate");
             newSeat.setPayment("no allocate");
             seatService.saveSeat(newSeat);
+            System.out.println(newSeat.toString());
             model.addAttribute("seat12345", newSeat);
         }
 

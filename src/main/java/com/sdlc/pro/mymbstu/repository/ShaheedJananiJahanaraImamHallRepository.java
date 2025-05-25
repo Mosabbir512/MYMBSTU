@@ -2,6 +2,7 @@ package com.sdlc.pro.mymbstu.repository;
 
 
 import com.sdlc.pro.mymbstu.model.AlemaKhatunBhashaniHall;
+import com.sdlc.pro.mymbstu.model.BangamataSheikhFazilatunnesaMujibHall;
 import com.sdlc.pro.mymbstu.model.JananetaAbdulMannanHall;
 import com.sdlc.pro.mymbstu.model.ShaheedJananiJahanaraImamHall;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,7 @@ public interface ShaheedJananiJahanaraImamHallRepository extends JpaRepository<S
 
     List<ShaheedJananiJahanaraImamHall> findByStatusFalse();
     List<ShaheedJananiJahanaraImamHall> findByStatusTrue();
+    List<ShaheedJananiJahanaraImamHall> findByRoomNumberAndStatusFalse(String roomNumber);
     @Query("SELECT h.hallId FROM ShaheedJananiJahanaraImamHall h WHERE h.status = false ORDER BY h.hallId ASC LIMIT 1")
     Long findFirstAvailableSeatId();
 

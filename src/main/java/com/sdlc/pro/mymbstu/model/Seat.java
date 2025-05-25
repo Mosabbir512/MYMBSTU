@@ -99,4 +99,18 @@ public class Seat {
     public void setPayment(String payment) {
         this.payment = payment;
     }
+
+    @Override
+    public String toString() {
+        return "Seat{" +
+                "id='" + id + '\'' +
+                ", user=" + user +
+                ", hallName='" + hallName + '\'' +
+                ", roomNumber='" + roomNumber + '\'' +
+                ", seatNumber='" + seatNumber + '\'' +
+                ", sessionId='" + sessionId + '\'' +
+                ", allocationDate='" + allocationDate + '\'' +
+                ", payment='" + payment + '\'' +
+                '}';
+    }
 }

@@ -119,8 +119,23 @@ public class hallApplyManController {
             return "seat/seat-allocation"; // Note: removed leading slash
         }
 
+        System.out.println(seatOptional.toString());
         // Seat found - add to model
+        List<Notice> notices=noticeService.getActiveNoticesByTypeAndHall(NoticeType.PAYMENT,user.getHallName());
         model.addAttribute("seat", seatOptional.get());
+        if(notices.size()!=0){
+            Notice noticePayment=notices.get(0);
+                Date date = noticePayment.getEndDate();
+                if (date != null && date.before(new Date())) { // endDate < currentDate
+                    model.addAttribute("notice", "yes");
+                }
+                else {
+                    model.addAttribute("notice", "no");
+                }
+        }
+        else {
+            model.addAttribute("notice", "no");
+        }
         model.addAttribute("user", user);
         return "seat/seat-allocation";
     }

@@ -238,7 +238,7 @@
       </div>
 
       <!-- Payment Status Message -->
-      <div th:if="${seat.payment == 'PENDING'}" class="payment-status payment-pending-status">
+      <div th:if="${seat.payment == 'PENDING' && notice=='yes'}" class="payment-status payment-pending-status">
         Payment Pending - Please complete your payment
       </div>
 
@@ -249,7 +249,7 @@
       <!-- Buttons Section -->
       <div class="buttons">
         <!-- Show Confirm Payment button only when payment is pending -->
-        <a th:if="${seat.payment == 'PENDING'}" href="/confirm-payment" class="btn btn-secondary">Confirm Payment</a>
+        <a th:if="${seat.payment == 'PENDING'  && notice=='yes'}" href="/confirm-payment" class="btn btn-secondary">Confirm Payment</a>
 
         <!-- Always show Back to Dashboard button -->
         <a href="/about_hall_man" class="btn btn-primary">Back to Dashboard</a>
