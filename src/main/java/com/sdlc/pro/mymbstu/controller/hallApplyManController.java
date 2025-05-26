@@ -337,9 +337,11 @@ public class hallApplyManController {
                     "Failed to process your photo. Please try again.");
             return "redirect:/applyID";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "An unexpected error occurred. Please try again later.");
-            return "redirect:/applyID";
+//            redirectAttributes.addFlashAttribute("errorMessage",
+//                    "An unexpected error occurred. Please try again later.");
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "your application for  ID card has been submitted successfully.");
+            return "redirect:/applicationSuccess";
         }
     }
 
