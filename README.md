@@ -63,8 +63,7 @@ Installation & Setup
 
 bash
 # Clone the repository
-git clone https://github.com/your-username/mbstu-campus-management.git
-https://github.com/Mosabbir512/MYMBSTU.git
+git clone https://github.com/Mosabbir512/MYMBSTU.git
 cd MYMBSTU
 
 
