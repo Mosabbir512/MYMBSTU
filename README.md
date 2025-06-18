@@ -58,8 +58,7 @@ Tech Stack
 - Always-updated directory of students and university staff.
 
 
-
-Installation & Setup
+Setup
 
 bash
 # Clone the repository
